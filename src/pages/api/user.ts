@@ -6,13 +6,15 @@ export type User = {
   isLoggedIn: boolean;
   name: string;
   email: string;
-  id: any;
+  id_user: any;
+  password: string;
 };
 
 async function userRoute(req: NextApiRequest, res: NextApiResponse<User>) {
   if (req.session.user) {
     // in a real world application you might read the user id from the session and then do a database request
     // to get more information on the user if needed
+
     res.json({
       ...req.session.user,
       isLoggedIn: true,
@@ -22,7 +24,8 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse<User>) {
       isLoggedIn: false,
       name: "",
       email: "",
-      id: null,
+      id_user: null,
+      password: "",
     });
   }
 }
