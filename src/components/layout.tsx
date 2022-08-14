@@ -1,30 +1,50 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+import { userServiceFactory } from "../../clientServices/userService";
+import useUser from "../../lib/useUser";
+import { useRouter } from "next/router";
+import fetchJson from "lib/fetchJson";
+export default function Layout({ children }: any) {
+  const router = useRouter();
 
-const user = {
+  const userService = userServiceFactory();
+  const { user, mutateUser } = useUser({
+    redirectTo: "/login",
+    redirectIfFound: false,
+  });
+  
+  const onLogout = async (e: any) => {
+    e.preventDefault();
+    try {
+      mutateUser(await fetchJson("/api/logout", { method: "POST" }), false);
+    } catch (error: any) {
+      alert(error.response.data.error);
+    }
+    router.push("/login");
+  };
+
+  /* const user = {
   name: "Tom Cook",
   email: "tom@example.com",
   imageUrl: "https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg",
-};
-const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Proyectos", href: "#", current: false },
-  { name: "Roles", href: "#", current: false },
-  { name: "Permisos", href: "#", current: false },
-  { name: "Usuarios", href: "#", current: false },
-];
-const userNavigation = [
-  { name: "Perfil", href: "#" },
-  { name: "Configuración", href: "#" },
-  { name: "Salir", href: "#" },
-];
+}; */
+  const navigation = [
+    { name: "Dashboard", href: "#", current: true },
+    { name: "Proyectos", href: "#", current: false },
+    { name: "Roles", href: "#", current: false },
+    { name: "Permisos", href: "#", current: false },
+    { name: "Usuarios", href: "#", current: false },
+  ];
+  const userNavigation = [
+    { name: "Perfil", href: "#" },
+    { name: "Configuración", href: "#" },
+    { name: "Salir", href: "/api/login", onClick: onLogout },
+  ];
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
-export default function Layout({children}:any) {
+  function classNames(...classes: string[]) {
+    return classes.filter(Boolean).join(" ");
+  }
   return (
     <>
       <div className="min-h-full">
@@ -63,7 +83,9 @@ export default function Layout({children}:any) {
                             <span className="sr-only">Open user menu</span>
                             <img
                               className="h-8 w-8 rounded-full"
-                              src={user.imageUrl}
+                              src={
+                                "https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg"
+                              }
                               alt=""
                             />
                           </Menu.Button>
@@ -83,6 +105,9 @@ export default function Layout({children}:any) {
                                 {({ active }) => (
                                   <a
                                     href={item.href}
+                                    onClick={
+                                      item.onClick ? item.onClick : undefined
+                                    }
                                     className={classNames(
                                       active ? "bg-teal-100" : "",
                                       "block px-4 py-2 text-sm text-teal-700"
@@ -139,22 +164,23 @@ export default function Layout({children}:any) {
                     <div className="flex-shrink-0">
                       <img
                         className="h-10 w-10 rounded-full"
-                        src={user.imageUrl}
+                        src={"https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg"}
                         alt=""
                       />
                     </div>
                     <div className="ml-3">
                       <div className="text-base font-medium leading-none text-white">
-                        {user.name}
+                        {user?.name}
                       </div>
                       <div className="text-xs font-medium leading-none text-gray-400">
-                        {user.email}
+                        {user?.email}
                       </div>
                     </div>
                   </div>
                   <div className="mt-3 px-2 space-y-1">
                     {userNavigation.map((item) => (
                       <Disclosure.Button
+                        onClick={item.onClick ? item.onClick : undefined}
                         key={item.name}
                         as="a"
                         href={item.href}
@@ -170,9 +196,10 @@ export default function Layout({children}:any) {
           )}
         </Disclosure>
 
-       
         <main>
-          <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">{children} </div>
+          <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            {children}{" "}
+          </div>
         </main>
       </div>
     </>
