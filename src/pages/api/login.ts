@@ -30,7 +30,7 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
           return res.status(400).json({ error: "BAD LOGIN" });
         }
       } catch (error) {
-        return res.status(400).json({ error: (error as Error).message });
+        return res.status(400).json({ message: "INVALID" }); //en fetchJson.ts lee por message, no se si cambiar el resto porque directo cae acá cuando hay error
       }
     default:
       return res.status(400).json({ error: "INVALID" });

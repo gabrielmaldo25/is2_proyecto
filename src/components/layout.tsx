@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { userServiceFactory } from "../../clientServices/userService";
@@ -7,13 +7,16 @@ import { useRouter } from "next/router";
 import fetchJson from "lib/fetchJson";
 export default function Layout({ children }: any) {
   const router = useRouter();
+  useEffect(() => {
+    console.log("NOSE: ", router.pathname);
+  }, [router.pathname]);
 
   const userService = userServiceFactory();
   const { user, mutateUser } = useUser({
     redirectTo: "/login",
     redirectIfFound: false,
   });
-  
+
   const onLogout = async (e: any) => {
     e.preventDefault();
     try {
@@ -30,11 +33,11 @@ export default function Layout({ children }: any) {
   imageUrl: "https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg",
 }; */
   const navigation = [
-    { name: "Dashboard", href: "#", current: true },
-    { name: "Proyectos", href: "#", current: false },
-    { name: "Roles", href: "#", current: false },
-    { name: "Permisos", href: "#", current: false },
-    { name: "Usuarios", href: "#", current: false },
+    //{ name: "Dashboard", href: "#", current: true },
+    { name: "Proyectos", href: "/", current: true },
+    { name: "Usuarios", href: "/usuarios", current: false },
+    { name: "Seguridad", href: "#", current: false },
+    //{ name: "Usuarios", href: "#", current: false },
   ];
   const userNavigation = [
     { name: "Perfil", href: "#" },
@@ -61,12 +64,12 @@ export default function Layout({ children }: any) {
                             key={item.name}
                             href={item.href}
                             className={classNames(
-                              item.current
+                              item.href.toLowerCase() == router.pathname
                                 ? "bg-teal-900 text-white"
                                 : " hover:bg-teal-700 text-white",
                               "px-3 py-2 rounded-md text-sm font-medium"
                             )}
-                            aria-current={item.current ? "page" : undefined}
+                            // aria-current={item.current ? "page" : undefined}
                           >
                             {item.name}
                           </a>
@@ -148,12 +151,12 @@ export default function Layout({ children }: any) {
                       as="a"
                       href={item.href}
                       className={classNames(
-                        item.current
+                        item.href.toLowerCase() == router.pathname
                           ? "bg-teal-900 text-white"
                           : "hover:bg-teal-700 text-white",
                         "block px-3 py-2 rounded-md text-base font-medium"
                       )}
-                      aria-current={item.current ? "page" : undefined}
+                      //aria-current={item.current ? "page" : undefined}
                     >
                       {item.name}
                     </Disclosure.Button>
