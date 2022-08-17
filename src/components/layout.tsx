@@ -7,9 +7,6 @@ import { useRouter } from "next/router";
 import fetchJson from "lib/fetchJson";
 export default function Layout({ children }: any) {
   const router = useRouter();
-  useEffect(() => {
-    console.log("NOSE: ", router.pathname);
-  }, [router.pathname]);
 
   const userService = userServiceFactory();
   const { user, mutateUser } = useUser({
@@ -200,8 +197,10 @@ export default function Layout({ children }: any) {
         </Disclosure>
 
         <main>
-          <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            {children}{" "}
+          <div className="bg-black h-screen">
+            <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 ">
+              {children}{" "}
+            </div>
           </div>
         </main>
       </div>

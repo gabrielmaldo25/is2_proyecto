@@ -7,7 +7,7 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
-
+import Nuevo from "./nuevo";
 import {
   Box,
   Table,
@@ -147,17 +147,20 @@ export default function test() {
 
   /* *** */
 
+  const [open, setOpen] = React.useState(false);
+
   return (
     <Layout>
       <div>
         <div>
           <section>
-            <header className="bg-slate-100 space-y-4 p-4  sm:py-6 lg:py-4  xl:py-6">
+            <header className="bg-gray-900 space-y-4 p-4  sm:py-6 lg:py-4  xl:py-6">
               <div className="flex items-center justify-between">
-                <h2 className="font-semibold text-slate-900">Usuarios</h2>
+                <h2 className="font-semibold text-white">Usuarios</h2>
                 <a
-                  href="/new"
-                  className="hover:bg-teal-400 group flex items-center rounded-md bg-teal-500 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
+                  //href="/new"
+                  className="hover:bg-teal-600 group flex items-center rounded-md bg-teal-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
+                  onClick={() => setOpen(true)}
                 >
                   <svg
                     width="20"
@@ -200,7 +203,7 @@ export default function test() {
                 aria-label="custom pagination table"
                 className="p-4 sm:px-8 sm:py-6 lg:p-4 xl:px-8 xl:py-6"
               >
-                <TableHead className="bg-black">
+                <TableHead className="bg-teal-900">
                   <TableRow>
                     <TableCell className="text-white">id</TableCell>
                     <TableCell className="text-white">Name</TableCell>
@@ -215,7 +218,7 @@ export default function test() {
                       )
                     : rows
                   ).map((row) => (
-                    <TableRow key={row.name}>
+                    <TableRow key={row.name} className="bg-gray-700">
                       <TableCell component="th" scope="row">
                         {row.name}
                       </TableCell>
@@ -258,6 +261,7 @@ export default function test() {
                 </TableFooter>
               </Table>
             </TableContainer>
+            {open && <Nuevo open={open} setOpen={setOpen} />}
           </section>
         </div>
       </div>
