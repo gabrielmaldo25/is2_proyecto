@@ -156,7 +156,7 @@ export default function test() {
           <section>
             <header className="bg-gray-900 space-y-4 p-4  sm:py-6 lg:py-4  xl:py-6">
               <div className="flex items-center justify-between">
-                <h2 className="font-semibold text-white">Usuarios</h2>
+                <h1 className="text-3xl font-bold text-white">Usuarios</h1>
                 <a
                   //href="/new"
                   className="hover:bg-teal-600 group flex items-center rounded-md bg-teal-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"

@@ -1,11 +1,14 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+import { Dialog, DialogActions, DialogTitle, Button } from "@mui/material";
+
+function Input({ ...props }: any) {
+  return (
+    <input
+      className="w-full appearance-none bg-transparent border-b-2 focus:border-white border-black text-white p-2 placeholder-white leading-tight focus:outline-none"
+      {...props}
+    />
+  );
+}
 
 export default function Nuevo({ open, setOpen }: any) {
   const handleClose = () => {
@@ -15,56 +18,34 @@ export default function Nuevo({ open, setOpen }: any) {
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Agregar Usuario</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Agrega un nuevo usuario a la Plataforma.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Nombre"
-            fullWidth
-            variant="standard"
-          />
-          <TextField
-            margin="dense"
-            id="name"
-            label="Email Address"
-            type="email"
-            fullWidth
-            variant="standard"
-          />
-          <TextField
-            margin="dense"
-            id="name"
-            label="Contraseña"
+        <DialogTitle className="bg-gray-900 text-white">
+          Agregar Usuario
+        </DialogTitle>
+
+        <div className="bg-gray-700 space-y-4 w-full p-8 pt-4 ">
+          <Input type="text" placeholder="Nombre" aria-label="nombre" />
+          <Input type="email" placeholder="Email" aria-label="email" />
+          <Input
             type="password"
-            fullWidth
-            variant="standard"
+            placeholder="Contraseña"
+            aria-label="password"
           />
-          <TextField
-            margin="dense"
-            id="name"
-            label="Confirmar Contraseña"
+          <Input
             type="password"
-            fullWidth
-            variant="standard"
+            placeholder="Confirmar Contraseña"
+            aria-label="password confirmation"
           />
-        </DialogContent>
-        <DialogActions>
+        </div>
+        <DialogActions className="bg-gray-900">
           <Button
-            style={{ textTransform: "none" }}
             onClick={handleClose}
-            className="hover:bg-teal-700 hover:text-white group flex items-center rounded-md text-teal-900 text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
+            className="normal-case hover:ring-teal-700 hover:ring-1 group flex items-center rounded-md text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
           >
             Cancelar
           </Button>
           <Button
-            style={{ textTransform: "none" }}
             onClick={handleClose}
-            className="hover:bg-teal-700 group flex items-center rounded-md bg-teal-900 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
+            className="normal-case hover:bg-teal-700 group flex items-center rounded-md bg-teal-900 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
           >
             Guardar
           </Button>
