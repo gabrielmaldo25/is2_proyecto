@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Layout from "src/components/layout";
 import { PencilIcon } from "@heroicons/react/outline";
 /*Parte de la tabla */
@@ -21,7 +22,9 @@ import {
   IconButton,
   TableHead,
 } from "@mui/material";
-
+import { Usuario } from "src/interfaces/interfaces";
+import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 /* *** */
 
 interface TablePaginationActionsProps {
@@ -67,6 +70,8 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
         onClick={handleFirstPageButtonClick}
         disabled={page === 0}
         aria-label="first page"
+        /*    style={{ color: "white" }}
+        sx={{ "&:disabled": { color: "green" } }} */
       >
         {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
       </IconButton>
@@ -103,7 +108,7 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   );
 }
 
-function createData(name: string, calories: number, fat: number) {
+/* function createData(name: string, calories: number, fat: number) {
   return { name, calories, fat };
 }
 const rows = [
@@ -121,15 +126,23 @@ const rows = [
   createData("Nougat", 360, 19.0),
   createData("Oreo", 437, 18.0),
 ].sort((a, b) => (a.calories < b.calories ? -1 : 1));
+ */
+interface Props {
+  usuarios: Usuario[];
+}
+export default function indexUsers({ usuarios }: Props) {
+  useEffect(() => {
+    console.log("USUARIOS: ", usuarios);
+  }, [usuarios]);
+  const router = useRouter();
 
-export default function test() {
   /* PArte de la tabla */
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
+  const [usuario, setUsuario] = useState<any>(null);
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - usuarios.length) : 0;
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -148,7 +161,9 @@ export default function test() {
   /* *** */
 
   const [open, setOpen] = React.useState(false);
-
+  const refreshData = () => {
+    router.replace(router.asPath);
+  };
   return (
     <Layout>
       <div>
@@ -159,7 +174,7 @@ export default function test() {
                 <h1 className="text-3xl font-bold text-white">Usuarios</h1>
                 <a
                   //href="/new"
-                  className="hover:bg-teal-600 group flex items-center rounded-md bg-teal-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
+                  className="hover:bg-green-600 group flex items-center rounded-md bg-green-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
                   onClick={() => setOpen(true)}
                 >
                   <svg
@@ -179,7 +194,7 @@ export default function test() {
                   width="20"
                   height="20"
                   fill="currentColor"
-                  className="absolute left-3 top-1/2 -mt-2.5 text-slate-400 pointer-events-none group-focus-within:text-teal-500"
+                  className="absolute left-3 top-1/2 -mt-2.5 text-gray-900 pointer-events-none group-focus-within:text-green-400"
                   aria-hidden="true"
                 >
                   <path
@@ -189,7 +204,7 @@ export default function test() {
                   />
                 </svg>
                 <input
-                  className="focus:ring-2 focus:ring-teal-500 focus:outline-none appearance-none w-full text-sm leading-6 text-slate-900 placeholder-slate-400 rounded-md py-2 pl-10 ring-1 ring-slate-200 shadow-sm"
+                  className="focus:ring-2 focus:ring-green-400 focus:outline-none appearance-none w-full text-sm leading-6 text-gray-900 placeholder-gray-900 rounded-md py-2 pl-10 ring-1 ring-sand-300 shadow-sm bg-sand-300"
                   type="text"
                   aria-label="Buscar Usuarios"
                   placeholder="Buscar Usuarios..."
@@ -203,7 +218,7 @@ export default function test() {
                 aria-label="custom pagination table"
                 className="p-4 sm:px-8 sm:py-6 lg:p-4 xl:px-8 xl:py-6"
               >
-                <TableHead className="bg-teal-900">
+                <TableHead className="bg-green-800">
                   <TableRow>
                     <TableCell className="text-white">id</TableCell>
                     <TableCell className="text-white">Name</TableCell>
@@ -212,20 +227,33 @@ export default function test() {
                 </TableHead>
                 <TableBody>
                   {(rowsPerPage > 0
-                    ? rows.slice(
+                    ? usuarios.slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                    : rows
+                    : usuarios
                   ).map((row) => (
-                    <TableRow key={row.name} className="bg-gray-700">
-                      <TableCell component="th" scope="row">
+                    <TableRow
+                      key={row.id_user}
+                      className="bg-gray-900 hover:bg-green-300 ring-1 ring-gray-900 "
+                      onClick={() => {
+                        setUsuario(row);
+                        setOpen(true);
+                      }}
+                    >
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        className="text-sand-300 hover:text-gray-900"
+                      >
+                        {row.id_user}
+                      </TableCell>
+                      <TableCell className="text-sand-300 hover:text-gray-900">
                         {row.name}
                       </TableCell>
-                      <TableCell style={{ width: 160 }}>
-                        {row.calories}
+                      <TableCell className="text-sand-300 hover:text-gray-900">
+                        {row.email}
                       </TableCell>
-                      <TableCell style={{ width: 160 }}>{row.fat}</TableCell>
                     </TableRow>
                   ))}
                   {emptyRows > 0 && (
@@ -234,7 +262,7 @@ export default function test() {
                     </TableRow>
                   )}
                 </TableBody>
-                <TableFooter className="bg-slate-200">
+                <TableFooter className="bg-green-800">
                   <TableRow>
                     <TablePagination
                       rowsPerPageOptions={[
@@ -244,7 +272,7 @@ export default function test() {
                         { label: "All", value: -1 },
                       ]}
                       colSpan={3}
-                      count={rows.length}
+                      count={usuarios.length}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       SelectProps={{
@@ -261,10 +289,26 @@ export default function test() {
                 </TableFooter>
               </Table>
             </TableContainer>
-            {open && <Nuevo open={open} setOpen={setOpen} />}
+            {open && (
+              <Nuevo
+                open={open}
+                setOpen={setOpen}
+                user={usuario}
+                setUser={setUsuario}
+                refetchUsers={refreshData}
+              />
+            )}
           </section>
         </div>
       </div>
     </Layout>
   );
 }
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const res = await fetch("http://localhost:3000/api/usuarios");
+  const usuarios = await res.json();
+
+  return {
+    props: { usuarios },
+  };
+};
