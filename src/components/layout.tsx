@@ -24,17 +24,10 @@ export default function Layout({ children }: any) {
     router.push("/login");
   };
 
-  /* const user = {
-  name: "Tom Cook",
-  email: "tom@example.com",
-  imageUrl: "https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg",
-}; */
   const navigation = [
-    //{ name: "Dashboard", href: "#", current: true },
     { name: "Proyectos", href: "/", current: true },
     { name: "Usuarios", href: "/usuarios", current: false },
     { name: "Seguridad", href: "#", current: false },
-    //{ name: "Usuarios", href: "#", current: false },
   ];
   const userNavigation = [
     { name: "Perfil", href: "#" },
@@ -62,11 +55,10 @@ export default function Layout({ children }: any) {
                             href={item.href}
                             className={classNames(
                               item.href.toLowerCase() == router.pathname
-                                ? "bg-green-800 text-white"
-                                : " hover:bg-green-600 text-white",
+                                ? "bg-green-600 text-white"
+                                : " hover:bg-green-400 text-white",
                               "px-3 py-2 rounded-md text-sm font-medium"
                             )}
-                            // aria-current={item.current ? "page" : undefined}
                           >
                             {item.name}
                           </a>
@@ -153,7 +145,6 @@ export default function Layout({ children }: any) {
                           : "hover:bg-green-600 text-white",
                         "block px-3 py-2 rounded-md text-base font-medium"
                       )}
-                      //aria-current={item.current ? "page" : undefined}
                     >
                       {item.name}
                     </Disclosure.Button>
@@ -199,7 +190,7 @@ export default function Layout({ children }: any) {
         <main>
           <div className="bg-black h-screen">
             <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 ">
-              {children}{" "}
+              {children}
             </div>
           </div>
         </main>

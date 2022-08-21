@@ -17,7 +17,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const result = await conn.query(text, values);
 
         if (result.rowCount === 0)
-          return res.status(404).json({ message: "User Not Found" });
+          return res.status(404).json({ message: "Usuario no encontrado" });
 
         return res.json(result.rows[0]);
       } catch (error: any) {
@@ -41,13 +41,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const result = await conn.query(text, values);
 
         if (result.rowCount === 0)
-          return res.status(404).json({ message: "User Not Found" });
+          return res.status(404).json({ message: "Usuario no encontrado" });
 
         return res.json(result.rows[0]);
       } catch (error: any) {
         return res.status(400).json({ message: error.message });
       }
     default:
-      return res.status(400).json({ message: "Method is not supported" });
+      return res.status(400).json({ message: "Método inválido." });
   }
 };

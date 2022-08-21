@@ -45,7 +45,6 @@ export default function Nuevo({
   const [openDelete, setOpenDelete] = useState(false);
 
   useEffect(() => {
-    console.log("USUARIO: ", user);
     user !== null ? setUsuario(user) : null;
   }, [user]);
   const handleClose = () => {
@@ -55,11 +54,7 @@ export default function Nuevo({
   const createUser = async (usuario: Usuario) => {
     const { password, ...restOfUser } = usuario;
     const encrypted = await bcrypt.hash(password, 5);
-    //const encrypted = password;
-    console.log(
-      "PA ENVIAR: ",
-      JSON.stringify({ password: encrypted, ...restOfUser })
-    );
+
     await fetch("http://localhost:3000/api/usuarios", {
       method: "POST",
       body: JSON.stringify({ password: encrypted, ...restOfUser }),
@@ -122,7 +117,7 @@ export default function Nuevo({
         console.log(error);
       }
     } else {
-      alert("Passwords must match");
+      alert("Contraseñas deben coincidir");
     }
 
     setLoading(false);
@@ -185,7 +180,6 @@ export default function Nuevo({
             {user && (
               <Button
                 onClick={() => setOpenDelete(true)}
-                //className="normal-case hover:bg-green-600 group flex items-center rounded-md bg-green-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
                 className="normal-case"
                 color="warning"
               >

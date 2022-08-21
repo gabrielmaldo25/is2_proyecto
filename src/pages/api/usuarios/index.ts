@@ -4,11 +4,8 @@ import { conn } from "src/utils/database";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   const { method, body } = req;
-  console.log("METHOD: ", method);
-
   switch (method) {
     case "GET":
-      console.log("ENTRA GET");
       try {
         const query = `select u.*, upr.valido_desde valido_desde,
         upr.valido_hasta valido_hasta, r.nombre descripcion_rol
@@ -23,8 +20,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       }
     case "POST":
       try {
-        console.log("ENTRA POST");
-
         const { name, email, password } = body;
 
         const query =
@@ -32,16 +27,11 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         const values = [name, email, password];
 
         const response = await conn.query(query, values);
-        console.log("RESS: ", response);
         return res.json(response.rows[0]);
       } catch (error: any) {
-        console.log("ENTRA ERRRORRRR: ", error);
-
         return res.status(400).json({ message: error.message || error.error });
       }
     default:
-      console.log("ENTRA DEF");
-
       return res.status(400).json({ message: "Method is not supported" });
   }
 }
