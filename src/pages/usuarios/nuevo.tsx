@@ -1,4 +1,10 @@
-import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import {
   Dialog,
   DialogActions,
@@ -8,7 +14,7 @@ import {
 } from "@mui/material";
 import { Usuario } from "src/interfaces/interfaces";
 import * as bcrypt from "bcryptjs";
-
+import { isNilorEmpty } from "src/helpers";
 function Input({ ...props }: any) {
   return (
     <input
@@ -42,10 +48,11 @@ export default function Nuevo({
   const [usuario, setUsuario] = useState<Usuario>(inititalState);
   const [loading, setLoading] = useState(false);
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const passwordRef = useRef(user?.password || null);
   const [openDelete, setOpenDelete] = useState(false);
 
   useEffect(() => {
-    user !== null ? setUsuario(user) : null;
+    user !== null ? setUsuario({ ...user, password: "" }) : null;
   }, [user]);
   const handleClose = () => {
     user ? setUser(null) : null;
@@ -63,15 +70,20 @@ export default function Nuevo({
       },
     });
   };
-  const updateUser = async (id: any, usuario: Usuario) =>
+  const updateUser = async (id: any, usuario: Usuario) => {
+    const { password, ...restOfUser } = usuario;
+    let encrypted = "";
+    if (!isNilorEmpty(usuario.password)) {
+      encrypted = await bcrypt.hash(password, 5);
+    }
     await fetch("http://localhost:3000/api/usuarios/" + id, {
       method: "PUT",
-      body: JSON.stringify(usuario),
+      body: JSON.stringify({ password: encrypted, ...restOfUser }),
       headers: {
         "Content-Type": "application/json",
       },
     });
-
+  };
   const handleDelete = async () => {
     try {
       const res = await fetch(
@@ -83,6 +95,7 @@ export default function Nuevo({
       refetchUsers();
       setOpenDelete(false);
       setOpen(false);
+      setUser(null);
     } catch (error) {
       console.log(error);
     }
@@ -99,25 +112,38 @@ export default function Nuevo({
     return pass1 === pass2;
   }
 
+  function afterSaved() {
+    setUsuario(inititalState);
+    setPasswordConfirmation("");
+    refetchUsers();
+    setOpen(false);
+  }
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    if (compararPasswords(usuario.password, passwordConfirmation)) {
-      try {
-        if (user?.hasOwnProperty("id_user")) {
+
+    try {
+      if (user?.hasOwnProperty("id_user")) {
+        if (!isNilorEmpty(usuario.password))
+          if (compararPasswords(usuario.password, passwordConfirmation)) {
+            updateUser(user.id_user, usuario);
+            afterSaved();
+          } else alert("Contraseñas deben coincidir");
+        else {
           updateUser(user.id_user, usuario);
-        } else {
-          createUser(usuario);
+          afterSaved();
         }
-        setUsuario(inititalState);
-        setPasswordConfirmation("");
-        refetchUsers();
-        setOpen(false);
-      } catch (error) {
-        console.log(error);
+      } else {
+        if (compararPasswords(usuario.password, passwordConfirmation)) {
+          createUser(usuario);
+          afterSaved();
+        } else {
+          alert("Contraseñas deben coincidir");
+        }
       }
-    } else {
-      alert("Contraseñas deben coincidir");
+    } catch (error) {
+      console.log(error);
     }
 
     setLoading(false);
@@ -148,14 +174,16 @@ export default function Nuevo({
             />
             <Input
               type="password"
-              placeholder="Contraseña"
+              placeholder={user ? "Nueva Contraseña" : "Contraseña"}
               name="password"
               onChange={handleChange}
               required={user?.id_user ? false : true}
             />
             <Input
               type="password"
-              placeholder="Confirmar Contraseña"
+              placeholder={
+                user ? "Confirmar Nueva Contraseña" : "Confirmar Contraseña"
+              }
               name="passwordConfirmation"
               required={user?.id_user ? false : true}
               onChange={({ target: { value } }: ChangeInputHandler) =>
@@ -175,7 +203,7 @@ export default function Nuevo({
               className="normal-case hover:bg-green-600 group flex items-center rounded-md bg-green-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
               type="submit"
             >
-              Actualizar
+              {user ? "Actualizar" : "Guardar"}
             </Button>
             {user && (
               <Button

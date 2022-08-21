@@ -7,7 +7,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   switch (method) {
     case "GET":
       try {
-        const query = `select u.*, upr.valido_desde valido_desde,
+        const query = `select u.id_user, u.name, u.email, upr.valido_desde valido_desde,
         upr.valido_hasta valido_hasta, r.nombre descripcion_rol
         from usuarios u left join usuarios_permisos_roles upr on u.id_user = upr.id_user
         left join roles_permisos rp on upr.id_rol_permiso = rp.id_rol_permiso

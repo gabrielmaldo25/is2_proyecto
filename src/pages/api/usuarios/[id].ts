@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { conn } from "src/utils/database";
-
+import { isNilorEmpty } from "src/helpers";
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const {
@@ -25,10 +25,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     case "PUT":
       try {
-        const { name, email } = body;
-        const text =
-          "UPDATE usuarios SET name = $1, email = $2 WHERE id_user = $3 RETURNING *";
-        const values = [name, email, id];
+        const { name, email, password } = body;
+        let text = "UPDATE usuarios SET name = $1, email = $2 ";
+        if (!isNilorEmpty(password)) text += ", password = $4 ";
+        text += "WHERE id_user = $3 RETURNING *";
+        let values = [name, email, id];
+        if (!isNilorEmpty(password)) values.push(password);
         const result = await conn.query(text, values);
         return res.json(result.rows[0]);
       } catch (error: any) {
