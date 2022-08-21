@@ -10,7 +10,12 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     case "GET":
       console.log("ENTRA GET");
       try {
-        const query = "SELECT * FROM usuarios";
+        const query = `select u.*, upr.valido_desde valido_desde,
+        upr.valido_hasta valido_hasta, r.nombre descripcion_rol
+        from usuarios u left join usuarios_permisos_roles upr on u.id_user = upr.id_user
+        left join roles_permisos rp on upr.id_rol_permiso = rp.id_rol_permiso
+        left join roles r on r.id_rol = rp.id_rol
+        order by 1 asc;`;
         const response = await conn.query(query);
         return res.json(response.rows);
       } catch (error: any) {

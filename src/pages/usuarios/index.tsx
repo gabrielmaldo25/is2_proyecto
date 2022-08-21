@@ -221,8 +221,11 @@ export default function indexUsers({ usuarios }: Props) {
                 <TableHead className="bg-green-800">
                   <TableRow>
                     <TableCell className="text-white">id</TableCell>
-                    <TableCell className="text-white">Name</TableCell>
+                    <TableCell className="text-white">Nombre</TableCell>
                     <TableCell className="text-white">Email</TableCell>
+                    <TableCell className="text-white">Rol</TableCell>
+                    <TableCell className="text-white">Rol desde</TableCell>
+                    <TableCell className="text-white">Rol hasta</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -254,6 +257,19 @@ export default function indexUsers({ usuarios }: Props) {
                       <TableCell className="text-sand-300 hover:text-gray-900">
                         {row.email}
                       </TableCell>
+                      <TableCell className="text-sand-300 hover:text-gray-900">
+                        {row.descripcion_rol ? row.descripcion_rol : null}
+                      </TableCell>
+                      <TableCell className="text-sand-300 hover:text-gray-900">
+                        {row.rol_desde
+                          ? row.rol_desde.toLocaleDateString()
+                          : null}
+                      </TableCell>
+                      <TableCell className="text-sand-300 hover:text-gray-900">
+                        {row.rol_hasta
+                          ? row.rol_hasta.toLocaleDateString()
+                          : null}
+                      </TableCell>
                     </TableRow>
                   ))}
                   {emptyRows > 0 && (
@@ -271,7 +287,7 @@ export default function indexUsers({ usuarios }: Props) {
                         25,
                         { label: "All", value: -1 },
                       ]}
-                      colSpan={3}
+                      colSpan={6}
                       count={usuarios.length}
                       rowsPerPage={rowsPerPage}
                       page={page}
