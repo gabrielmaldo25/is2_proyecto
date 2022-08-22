@@ -11,6 +11,8 @@ import {
   DialogTitle,
   Button,
   DialogContentText,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { Usuario } from "src/interfaces/interfaces";
 import * as bcrypt from "bcryptjs";
@@ -191,6 +193,27 @@ export default function Nuevo({
               }
               value={passwordConfirmation}
             />
+            <div className="flex flex-col">
+              <text className="text-lg">
+                Puedes seleccionar un rol para este usuario
+              </text>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                //value={age}
+                //onChange={handleChange}
+                size="small"
+              >
+                <MenuItem value={10}>Ten</MenuItem>
+                <MenuItem value={20}>Twenty</MenuItem>
+                <MenuItem value={30}>Thirty</MenuItem>
+              </Select>
+              <text className="text-lg bg-transparent">Rol válido hasta </text>
+              <input
+                type="date"
+                className="bg-transparent ring-1 p-2 rounded-sm ring-gray-500"
+              />
+            </div>
           </div>
           <DialogActions className="bg-gray-900">
             <Button
