@@ -4,7 +4,6 @@ import {
   DialogActions,
   DialogTitle,
   Button,
-  DialogContentText,
 } from "@mui/material";
 import { Permiso } from "src/interfaces/interfaces";
 import * as bcrypt from "bcryptjs";
@@ -44,7 +43,7 @@ export default function Nuevo({
 
   useEffect(() => {
     permission !== null ? setPermiso(permiso) : null;
-  }, [permission]);
+  }, [permiso, permission]);
   const handleClose = () => {
     permission ? setPermission(null) : null;
     setOpen(false);
