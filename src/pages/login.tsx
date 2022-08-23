@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useUser from "../../lib/useUser";
 import { userServiceFactory } from "../../clientServices/userService";
-import fetchJson, {FetchError} from './../../lib/fetchJson'
+import fetchJson, { FetchError } from "./../../lib/fetchJson";
 const userService = userServiceFactory();
 
 export default function login() {
@@ -21,24 +21,19 @@ export default function login() {
     };
     try {
       mutateUser(
-        await fetchJson('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        await fetchJson("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         })
-      )
+      );
     } catch (error) {
       if (error instanceof FetchError) {
-        alert(error.data.message)
+        alert(error.data.message);
       } else {
-        console.error('An unexpected error happened:', error)
+        console.error("An unexpected error happened:", error);
       }
     }
-    /* try {
-      mutateUser(await userService.login(email, password));
-    } catch (error: any) {
-      alert(error.response.data.error);
-    } */
   };
 
   const emailHandler = (e: any) => {
@@ -80,12 +75,6 @@ export default function login() {
             </div>
           </div>
         </form>
-        <p className="mt-8 text-xs font-light text-center text-gray-700">
-          No tienes cuenta?{" "}
-          <a href="#" className="font-medium text-teal-600 hover:underline">
-            Regístrate
-          </a>
-        </p>
       </div>
     </div>
   );

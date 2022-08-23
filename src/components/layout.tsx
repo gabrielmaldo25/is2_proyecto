@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { userServiceFactory } from "../../clientServices/userService";
@@ -13,7 +13,7 @@ export default function Layout({ children }: any) {
     redirectTo: "/login",
     redirectIfFound: false,
   });
-  
+
   const onLogout = async (e: any) => {
     e.preventDefault();
     try {
@@ -24,17 +24,10 @@ export default function Layout({ children }: any) {
     router.push("/login");
   };
 
-  /* const user = {
-  name: "Tom Cook",
-  email: "tom@example.com",
-  imageUrl: "https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg",
-}; */
   const navigation = [
-    { name: "Dashboard", href: "#", current: true },
-    { name: "Proyectos", href: "#", current: false },
-    { name: "Roles", href: "#", current: false },
-    { name: "Permisos", href: "#", current: false },
-    { name: "Usuarios", href: "#", current: false },
+    { name: "Proyectos", href: "/", current: true },
+    { name: "Usuarios", href: "/usuarios", current: false },
+    { name: "Seguridad", href: "#", current: false },
   ];
   const userNavigation = [
     { name: "Perfil", href: "#" },
@@ -48,7 +41,7 @@ export default function Layout({ children }: any) {
   return (
     <>
       <div className="min-h-full">
-        <Disclosure as="nav" className="bg-teal-800">
+        <Disclosure as="nav" className="bg-green-800">
           {({ open }) => (
             <>
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -61,12 +54,11 @@ export default function Layout({ children }: any) {
                             key={item.name}
                             href={item.href}
                             className={classNames(
-                              item.current
-                                ? "bg-teal-900 text-white"
-                                : " hover:bg-teal-700 text-white",
+                              item.href.toLowerCase() == router.pathname
+                                ? "bg-green-600 text-white"
+                                : " hover:bg-green-400 text-white",
                               "px-3 py-2 rounded-md text-sm font-medium"
                             )}
-                            aria-current={item.current ? "page" : undefined}
                           >
                             {item.name}
                           </a>
@@ -79,7 +71,7 @@ export default function Layout({ children }: any) {
                       {/* Profile dropdown */}
                       <Menu as="div" className="ml-3 relative">
                         <div>
-                          <Menu.Button className="max-w-xs bg-teal-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-800 focus:ring-white">
+                          <Menu.Button className="max-w-xs bg-green-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-800 focus:ring-white">
                             <span className="sr-only">Open user menu</span>
                             <img
                               className="h-8 w-8 rounded-full"
@@ -109,8 +101,8 @@ export default function Layout({ children }: any) {
                                       item.onClick ? item.onClick : undefined
                                     }
                                     className={classNames(
-                                      active ? "bg-teal-100" : "",
-                                      "block px-4 py-2 text-sm text-teal-700"
+                                      active ? "bg-sand-300" : "",
+                                      "block px-4 py-2 text-sm text-green-400"
                                     )}
                                   >
                                     {item.name}
@@ -125,7 +117,7 @@ export default function Layout({ children }: any) {
                   </div>
                   <div className="-mr-2 flex md:hidden">
                     {/* Mobile menu button */}
-                    <Disclosure.Button className="bg-teal-800 inline-flex items-center justify-center p-2 rounded-md text-teal-400 hover:text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-teal-800 focus:ring-white">
+                    <Disclosure.Button className="bg-green-800 inline-flex items-center justify-center p-2 rounded-md text-green-400 hover:text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-800 focus:ring-white">
                       <span className="sr-only">Open main menu</span>
                       {open ? (
                         <XIcon className="block h-6 w-6" aria-hidden="true" />
@@ -148,18 +140,17 @@ export default function Layout({ children }: any) {
                       as="a"
                       href={item.href}
                       className={classNames(
-                        item.current
-                          ? "bg-teal-900 text-white"
-                          : "hover:bg-teal-700 text-white",
+                        item.href.toLowerCase() == router.pathname
+                          ? "bg-green-800 text-white"
+                          : "hover:bg-green-600 text-white",
                         "block px-3 py-2 rounded-md text-base font-medium"
                       )}
-                      aria-current={item.current ? "page" : undefined}
                     >
                       {item.name}
                     </Disclosure.Button>
                   ))}
                 </div>
-                <div className="pt-4 pb-3 border-t border-teal-700">
+                <div className="pt-4 pb-3 border-t border-green-600">
                   <div className="flex items-center px-5">
                     <div className="flex-shrink-0">
                       <img
@@ -172,7 +163,7 @@ export default function Layout({ children }: any) {
                       <div className="text-base font-medium leading-none text-white">
                         {user?.name}
                       </div>
-                      <div className="text-xs font-medium leading-none text-gray-400">
+                      <div className="text-xs font-medium leading-none text-sand-300">
                         {user?.email}
                       </div>
                     </div>
@@ -184,7 +175,7 @@ export default function Layout({ children }: any) {
                         key={item.name}
                         as="a"
                         href={item.href}
-                        className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-teal-700"
+                        className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-green-600"
                       >
                         {item.name}
                       </Disclosure.Button>
@@ -197,8 +188,10 @@ export default function Layout({ children }: any) {
         </Disclosure>
 
         <main>
-          <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            {children}{" "}
+          <div className="bg-black h-screen">
+            <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 ">
+              {children}
+            </div>
           </div>
         </main>
       </div>
