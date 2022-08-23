@@ -279,7 +279,7 @@ export default function IndexPermisos({ permisos }: Props) {
 }
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const res = await fetch("http://localhost:3000/api/permisos");
-  const usuarios = await res.json();
+  const permisos = await res.json();
 
   return {
     props: { permisos },
