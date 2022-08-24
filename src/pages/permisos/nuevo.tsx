@@ -42,14 +42,15 @@ export default function Nuevo({
   const [openDelete, setOpenDelete] = useState(false);
 
   useEffect(() => {
-    permission !== null ? setPermiso(permiso) : null;
-  }, [permiso, permission]);
+    permission !== null ? setPermiso({ ...permission}) : null;
+    console.log(permission + permiso + "46");
+  }, [permission]);
   const handleClose = () => {
     permission ? setPermission(null) : null;
     setOpen(false);
   };
   const createPermiso = async (permiso: Permiso) => {
-
+    console.log("holaaaa");
     await fetch("http://localhost:3000/api/permisos", {
       method: "POST",
       body: JSON.stringify({ permiso }),
@@ -90,14 +91,23 @@ export default function Nuevo({
   const handleChange = ({ target: { name, value } }: ChangeInputHandler) =>
     setPermiso({ ...permiso, [name]: value });
 
+    function afterSaved() {
+      setPermiso(inititalState);
+      refetchPermissions();
+      setOpen(false);
+    }
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
       try {
         if (permission?.hasOwnProperty("id_permiso")) {
           updatePermiso(permission.id_permiso, permiso);
+          afterSaved();
         } else {
+          console.log(permiso + "hola");
           createPermiso(permiso);
+          afterSaved();
         }
         setPermiso(inititalState);
         refetchPermissions();
