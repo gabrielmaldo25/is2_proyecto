@@ -21,7 +21,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         const { descripcion, id_form } = body;
 
         const query =
-          "INSERT INTO permisos(description, id_form) VALUES ($1, $2) RETURNING *";
+          "INSERT INTO permisos(descripcion, id_form) VALUES ($1, $2) RETURNING *";
         const values = [descripcion, id_form ];
 
         const response = await conn.query(query, values);
