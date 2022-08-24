@@ -4,6 +4,12 @@ import {
   DialogActions,
   DialogTitle,
   Button,
+  Select,
+  MenuItem,
+  Checkbox,
+  OutlinedInput,
+  ListItemText,
+  SelectChangeEvent,
 } from "@mui/material";
 import { Permiso } from "src/interfaces/interfaces";
 import * as bcrypt from "bcryptjs";
@@ -16,6 +22,30 @@ function Input({ ...props }: any) {
     />
   );
 }
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
+const names = [
+  "Oliver Hansen",
+  "Van Henry",
+  "April Tucker",
+  "Ralph Hubbard",
+  "Omar Alexander",
+  "Carlos Abbott",
+  "Miriam Wagner",
+  "Bradley Wilkerson",
+  "Virginia Andrews",
+  "Kelly Snyder",
+];
 
 type ChangeInputHandler = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
@@ -40,9 +70,20 @@ export default function Nuevo({
   const [permiso, setPermiso] = useState<Permiso>(inititalState);
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const [personName, setPersonName] = React.useState<string[]>([]);
+
+  const handleSelectChange = (event: SelectChangeEvent<typeof personName>) => {
+    const {
+      target: { value },
+    } = event;
+    setPersonName(
+      // On autofill we get a stringified value.
+      typeof value === "string" ? value.split(",") : value
+    );
+  };
 
   useEffect(() => {
-    permission !== null ? setPermiso({ ...permission}) : null;
+    permission !== null ? setPermiso({ ...permission }) : null;
     console.log(permission + permiso + "46");
   }, [permission]);
   const handleClose = () => {
@@ -91,31 +132,30 @@ export default function Nuevo({
   const handleChange = ({ target: { name, value } }: ChangeInputHandler) =>
     setPermiso({ ...permiso, [name]: value });
 
-    function afterSaved() {
-      setPermiso(inititalState);
-      refetchPermissions();
-      setOpen(false);
-    }
+  function afterSaved() {
+    setPermiso(inititalState);
+    refetchPermissions();
+    setOpen(false);
+  }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-      try {
-        if (permission?.hasOwnProperty("id_permiso")) {
-          updatePermiso(permission.id_permiso, permiso);
-          afterSaved();
-        } else {
-          console.log(permiso + "hola");
-          createPermiso(permiso);
-          afterSaved();
-        }
-        setPermiso(inititalState);
-        refetchPermissions();
-        setOpen(false);
-      } catch (error) {
-        console.log(error);
+    try {
+      if (permission?.hasOwnProperty("id_permiso")) {
+        updatePermiso(permission.id_permiso, permiso);
+        afterSaved();
+      } else {
+        console.log(permiso + "hola");
+        createPermiso(permiso);
+        afterSaved();
       }
-
+      setPermiso(inititalState);
+      refetchPermissions();
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
 
     setLoading(false);
   };
@@ -135,6 +175,28 @@ export default function Nuevo({
               value={permiso.descripcion}
               required
             />
+            <div className="flex flex-col">
+              <text className="text-lg">
+                Selecciona la/s pantalla/s sobre la que el permiso puede operar
+              </text>
+              <Select
+                labelId="demo-multiple-checkbox-label"
+                id="demo-multiple-checkbox"
+                multiple
+                value={personName}
+                onChange={handleSelectChange}
+                input={<OutlinedInput label="Tag" />}
+                renderValue={(selected) => selected.join(", ")}
+                MenuProps={MenuProps}
+              >
+                {names.map((name) => (
+                  <MenuItem key={name} value={name}>
+                    <Checkbox checked={personName.indexOf(name) > -1} />
+                    <ListItemText primary={name} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
             {/* <Input
               type="text"
               placeholder="Formulario"
