@@ -1,42 +1,68 @@
-import { Fragment, useEffect } from "react";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
-import { userServiceFactory } from "../../clientServices/userService";
-import useUser from "../../lib/useUser";
-import { useRouter } from "next/router";
-import fetchJson from "lib/fetchJson";
+import { Fragment } from 'react';
+import { Disclosure, Menu, Transition } from '@headlessui/react';
+import { MenuIcon, XIcon } from '@heroicons/react/outline';
+import { userServiceFactory } from '../../clientServices/userService';
+import useUser from '../../lib/useUser';
+import { useRouter } from 'next/router';
+import fetchJson from 'lib/fetchJson';
+import Menu2 from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import React from 'react';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Collapse from '@mui/material/Collapse';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import List from '@mui/material/List';
+
 export default function Layout({ children }: any) {
   const router = useRouter();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const openMenu = Boolean(anchorEl);
+
+  const [openMob, setOpenMob] = React.useState(true);
+
+  const handleClickMob = () => {
+    setOpenMob(!openMob);
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const userService = userServiceFactory();
   const { user, mutateUser } = useUser({
-    redirectTo: "/login",
+    redirectTo: '/login',
     redirectIfFound: false,
   });
 
   const onLogout = async (e: any) => {
     e.preventDefault();
     try {
-      mutateUser(await fetchJson("/api/logout", { method: "POST" }), false);
+      mutateUser(await fetchJson('/api/logout', { method: 'POST' }), false);
     } catch (error: any) {
       alert(error.response.data.error);
     }
-    router.push("/login");
+    router.push('/login');
   };
 
   const navigation = [
-    { name: "Proyectos", href: "/", current: true },
-    { name: "Usuarios", href: "/usuarios", current: false },
-    { name: "Seguridad", href: "#", current: false },
+    { name: 'Proyectos', href: '/', current: true },
+    { name: 'Usuarios', href: '/usuarios', current: false },
+    { name: 'Seguridad', href: '#', current: false },
   ];
   const userNavigation = [
-    { name: "Perfil", href: "#" },
-    { name: "Configuración", href: "#" },
-    { name: "Salir", href: "/api/login", onClick: onLogout },
+    { name: 'Perfil', href: '#' },
+    { name: 'Configuración', href: '#' },
+    { name: 'Salir', href: '/api/login', onClick: onLogout },
   ];
 
   function classNames(...classes: string[]) {
-    return classes.filter(Boolean).join(" ");
+    return classes.filter(Boolean).join(' ');
   }
   return (
     <>
@@ -49,20 +75,49 @@ export default function Layout({ children }: any) {
                   <div className="flex items-center">
                     <div className="hidden md:block">
                       <div className=" flex items-baseline space-x-4">
-                        {navigation.map((item) => (
+                        {navigation.slice(0, 2).map((item) => (
                           <a
                             key={item.name}
                             href={item.href}
                             className={classNames(
                               item.href.toLowerCase() == router.pathname
-                                ? "bg-green-600 text-white"
-                                : " hover:bg-green-400 text-white",
-                              "px-3 py-2 rounded-md text-sm font-medium"
+                                ? 'bg-green-600 text-white'
+                                : ' hover:bg-green-400 text-white',
+                              'px-3 py-2 rounded-md text-sm font-medium',
                             )}
                           >
                             {item.name}
                           </a>
                         ))}
+                        <a
+                          key={'seguridad'}
+                          className={classNames(
+                            ' hover:bg-green-400 text-white',
+                            'px-3 py-2 rounded-md text-sm font-medium',
+                          )}
+                          onClick={handleClick}
+                        >
+                          Seguridad
+                        </a>
+                        <Menu2
+                          id="basic-menu"
+                          anchorEl={anchorEl}
+                          open={openMenu}
+                          onClose={handleClose}
+                          MenuListProps={{
+                            'aria-labelledby': 'basic-button',
+                          }}
+                        >
+                          <MenuItem
+                            onClick={() => {
+                              router.push('/permisos');
+                              handleClose();
+                            }}
+                          >
+                            Permisos
+                          </MenuItem>
+                          <MenuItem onClick={handleClose}>Roles</MenuItem>
+                        </Menu2>
                       </div>
                     </div>
                   </div>
@@ -75,9 +130,7 @@ export default function Layout({ children }: any) {
                             <span className="sr-only">Open user menu</span>
                             <img
                               className="h-8 w-8 rounded-full"
-                              src={
-                                "https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg"
-                              }
+                              src={'https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg'}
                               alt=""
                             />
                           </Menu.Button>
@@ -97,12 +150,10 @@ export default function Layout({ children }: any) {
                                 {({ active }) => (
                                   <a
                                     href={item.href}
-                                    onClick={
-                                      item.onClick ? item.onClick : undefined
-                                    }
+                                    onClick={item.onClick ? item.onClick : undefined}
                                     className={classNames(
-                                      active ? "bg-sand-300" : "",
-                                      "block px-4 py-2 text-sm text-green-400"
+                                      active ? 'bg-sand-300' : '',
+                                      'block px-4 py-2 text-sm text-green-400',
                                     )}
                                   >
                                     {item.name}
@@ -122,10 +173,7 @@ export default function Layout({ children }: any) {
                       {open ? (
                         <XIcon className="block h-6 w-6" aria-hidden="true" />
                       ) : (
-                        <MenuIcon
-                          className="block h-6 w-6"
-                          aria-hidden="true"
-                        />
+                        <MenuIcon className="block h-6 w-6" aria-hidden="true" />
                       )}
                     </Disclosure.Button>
                   </div>
@@ -134,38 +182,57 @@ export default function Layout({ children }: any) {
 
               <Disclosure.Panel className="md:hidden">
                 <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                  {navigation.map((item) => (
+                  {navigation.slice(0, 2).map((item) => (
                     <Disclosure.Button
                       key={item.name}
                       as="a"
                       href={item.href}
                       className={classNames(
                         item.href.toLowerCase() == router.pathname
-                          ? "bg-green-800 text-white"
-                          : "hover:bg-green-600 text-white",
-                        "block px-3 py-2 rounded-md text-base font-medium"
+                          ? 'bg-green-800 text-white'
+                          : 'hover:bg-green-600 text-white',
+                        'block px-3 py-2 rounded-md text-base font-medium',
                       )}
                     >
                       {item.name}
                     </Disclosure.Button>
                   ))}
+                  <List>
+                    <ListItemButton onClick={() => handleClickMob()}>
+                      <ListItemText className={classNames('bg-green-800 text-white')} primary="Seguridad" />
+                      {openMob ? <ExpandLess /> : <ExpandMore />}
+                    </ListItemButton>
+                    <Collapse in={openMob} timeout="auto" unmountOnExit>
+                      <List component="div" disablePadding>
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText
+                            onClick={() => {
+                              router.push('/permisos');
+                              handleClose();
+                            }}
+                            className={classNames('bg-green-800 text-white')}
+                            primary="Permisos"
+                          />
+                        </ListItemButton>
+                        <ListItemButton sx={{ pl: 4 }}>
+                          <ListItemText className={classNames('bg-green-800 text-white')} primary="Roles" />
+                        </ListItemButton>
+                      </List>
+                    </Collapse>
+                  </List>
                 </div>
                 <div className="pt-4 pb-3 border-t border-green-600">
                   <div className="flex items-center px-5">
                     <div className="flex-shrink-0">
                       <img
                         className="h-10 w-10 rounded-full"
-                        src={"https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg"}
+                        src={'https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg'}
                         alt=""
                       />
                     </div>
                     <div className="ml-3">
-                      <div className="text-base font-medium leading-none text-white">
-                        {user?.name}
-                      </div>
-                      <div className="text-xs font-medium leading-none text-sand-300">
-                        {user?.email}
-                      </div>
+                      <div className="text-base font-medium leading-none text-white">{user?.name}</div>
+                      <div className="text-xs font-medium leading-none text-sand-300">{user?.email}</div>
                     </div>
                   </div>
                   <div className="mt-3 px-2 space-y-1">
@@ -189,9 +256,7 @@ export default function Layout({ children }: any) {
 
         <main>
           <div className="bg-black h-screen">
-            <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 ">
-              {children}
-            </div>
+            <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 ">{children}</div>
           </div>
         </main>
       </div>
