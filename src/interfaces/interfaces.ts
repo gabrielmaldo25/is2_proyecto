@@ -14,3 +14,15 @@ export interface Usuario {
   rol_desde?: Date;
   rol_hasta?: Date;
 }
+
+export interface Permiso {
+  id_permiso?: any;
+  descripcion: string;
+  formulario?: any;
+}
+
+export interface Rol {
+  id_rol?: any;
+  nombre: string;
+  permisos?: any;
+}

@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Layout from "src/components/layout";
-import { PencilIcon } from "@heroicons/react/outline";
 /*Parte de la tabla */
 import * as React from "react";
 import { useTheme } from "@mui/material/styles";
@@ -22,7 +21,7 @@ import {
   IconButton,
   TableHead,
 } from "@mui/material";
-import { Usuario } from "src/interfaces/interfaces";
+import { Permiso } from "src/interfaces/interfaces";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 /* *** */
@@ -107,18 +106,18 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
 }
 
 interface Props {
-  usuarios: Usuario[];
+  permisos: Permiso[];
 }
-export default function indexUsers({ usuarios }: Props) {
+export default function IndexPermisos({ permisos }: Props) {
   const router = useRouter();
 
   /* Parte de la tabla */
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [usuario, setUsuario] = useState<any>(null);
+  const [permiso, setPermiso] = useState<any>(null);
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - usuarios.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - permisos.length) : 0;
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -147,7 +146,7 @@ export default function indexUsers({ usuarios }: Props) {
           <section>
             <header className="bg-gray-900 space-y-4 p-4  sm:py-6 lg:py-4  xl:py-6">
               <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold text-white">Usuarios</h1>
+                <h1 className="text-3xl font-bold text-white">Permisos</h1>
                 <a
                   className="hover:bg-green-600 group flex items-center rounded-md bg-green-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
                   onClick={() => setOpen(true)}
@@ -195,26 +194,23 @@ export default function indexUsers({ usuarios }: Props) {
                 <TableHead className="bg-green-800">
                   <TableRow>
                     <TableCell className="text-white">id</TableCell>
-                    <TableCell className="text-white">Nombre</TableCell>
-                    <TableCell className="text-white">Email</TableCell>
-                    <TableCell className="text-white">Rol</TableCell>
-                    <TableCell className="text-white">Rol desde</TableCell>
-                    <TableCell className="text-white">Rol hasta</TableCell>
+                    <TableCell className="text-white">Descripcion</TableCell>
+                    <TableCell className="text-white">Formulario</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {(rowsPerPage > 0
-                    ? usuarios.slice(
+                    ? permisos.slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                    : usuarios
+                    : permisos
                   ).map((row) => (
                     <TableRow
-                      key={row.id_user}
+                      key={row.id_permiso}
                       className="bg-gray-900 hover:bg-green-300 ring-1 ring-gray-900 "
                       onClick={() => {
-                        setUsuario(row);
+                        setPermiso(row);
                         setOpen(true);
                       }}
                     >
@@ -223,26 +219,13 @@ export default function indexUsers({ usuarios }: Props) {
                         scope="row"
                         className="text-sand-300 hover:text-gray-900"
                       >
-                        {row.id_user}
+                        {row.id_permiso}
                       </TableCell>
                       <TableCell className="text-sand-300 hover:text-gray-900">
-                        {row.name}
+                        {row.descripcion}
                       </TableCell>
                       <TableCell className="text-sand-300 hover:text-gray-900">
-                        {row.email}
-                      </TableCell>
-                      <TableCell className="text-sand-300 hover:text-gray-900">
-                        {row.descripcion_rol ? row.descripcion_rol : null}
-                      </TableCell>
-                      <TableCell className="text-sand-300 hover:text-gray-900">
-                        {row.rol_desde
-                          ? row.rol_desde.toLocaleDateString()
-                          : null}
-                      </TableCell>
-                      <TableCell className="text-sand-300 hover:text-gray-900">
-                        {row.rol_hasta
-                          ? row.rol_hasta.toLocaleDateString()
-                          : null}
+                        {row.formulario}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -262,7 +245,7 @@ export default function indexUsers({ usuarios }: Props) {
                         { label: "All", value: -1 },
                       ]}
                       colSpan={6}
-                      count={usuarios.length}
+                      count={permisos.length}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       SelectProps={{
@@ -283,9 +266,9 @@ export default function indexUsers({ usuarios }: Props) {
               <Nuevo
                 open={open}
                 setOpen={setOpen}
-                user={usuario}
-                setUser={setUsuario}
-                refetchUsers={refreshData}
+                permission={permiso}
+                setPermission={setPermiso}
+                refetchPermissions={refreshData}
               />
             )}
           </section>
@@ -295,10 +278,10 @@ export default function indexUsers({ usuarios }: Props) {
   );
 }
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const res = await fetch("http://localhost:3000/api/usuarios");
-  const usuarios = await res.json();
+  const res = await fetch("http://localhost:3000/api/permisos");
+  const permisos = await res.json();
 
   return {
-    props: { usuarios },
+    props: { permisos },
   };
 };
