@@ -10,10 +10,14 @@ import {
   OutlinedInput,
   ListItemText,
   SelectChangeEvent,
+  Chip,
+  Box,
 } from "@mui/material";
 import { Permiso } from "src/interfaces/interfaces";
 import * as bcrypt from "bcryptjs";
-
+import { GetServerSideProps } from "next";
+import { isNilorEmpty } from "src/helpers";
+import { xorBy } from "lodash";
 function Input({ ...props }: any) {
   return (
     <input
@@ -51,7 +55,7 @@ type ChangeInputHandler = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const inititalState = {
   descripcion: "",
-  id_form: "",
+  forms: [],
 };
 
 export default function Nuevo({
@@ -70,37 +74,43 @@ export default function Nuevo({
   const [permiso, setPermiso] = useState<Permiso>(inititalState);
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [personName, setPersonName] = React.useState<string[]>([]);
+  const [selectedForms, setSelectedForms] = React.useState<any[]>([]);
+  const [formularios, setFormularios] = useState([]);
 
-  const handleSelectChange = (event: SelectChangeEvent<typeof personName>) => {
-    const {
-      target: { value },
-    } = event;
-    setPersonName(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
+  useEffect(() => {
+    setLoading(true);
+    fetch("/api/formularios")
+      .then((res) => res.json())
+      .then((data) => {
+        setFormularios(data);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleSelectChange = (event: SelectChangeEvent<any>) => {
+    const { value } = event.target;
+
+    setSelectedForms(value);
   };
 
   useEffect(() => {
     permission !== null ? setPermiso({ ...permission }) : null;
-    console.log(permission + permiso + "46");
   }, [permission]);
   const handleClose = () => {
     permission ? setPermission(null) : null;
     setOpen(false);
   };
   const createPermiso = async (permiso: Permiso) => {
-    console.log("holaaaa");
+    let payload = { descripcion: permiso.descripcion, forms: selectedForms };
     await fetch("http://localhost:3000/api/permisos", {
       method: "POST",
-      body: JSON.stringify({ permiso }),
+      body: JSON.stringify(payload),
       headers: {
         "Content-Type": "application/json",
       },
     });
   };
-  const updatePermiso = async (id: any, permiso: Permiso) =>
+  const updatePermiso = async (id: any, permiso: Permiso) => {
     await fetch("http://localhost:3000/api/permisos/" + id, {
       method: "PUT",
       body: JSON.stringify(permiso),
@@ -108,6 +118,7 @@ export default function Nuevo({
         "Content-Type": "application/json",
       },
     });
+  };
 
   const handleDelete = async () => {
     try {
@@ -159,6 +170,8 @@ export default function Nuevo({
 
     setLoading(false);
   };
+
+  if (loading) return <p>Loading...</p>;
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
@@ -180,31 +193,38 @@ export default function Nuevo({
                 Selecciona la/s pantalla/s sobre la que el permiso puede operar
               </text>
               <Select
-                labelId="demo-multiple-checkbox-label"
-                id="demo-multiple-checkbox"
                 multiple
-                value={personName}
+                value={selectedForms}
                 onChange={handleSelectChange}
                 input={<OutlinedInput label="Tag" />}
-                renderValue={(selected) => selected.join(", ")}
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {selected.map((id) => (
+                      <Chip
+                        key={id}
+                        label={
+                          !isNilorEmpty(formularios)
+                            ? formularios.find((e) => e.id_form === id)
+                                .nombre_form
+                            : null
+                        }
+                      />
+                    ))}
+                  </Box>
+                )}
                 MenuProps={MenuProps}
               >
-                {names.map((name) => (
-                  <MenuItem key={name} value={name}>
-                    <Checkbox checked={personName.indexOf(name) > -1} />
-                    <ListItemText primary={name} />
-                  </MenuItem>
-                ))}
+                {!isNilorEmpty(formularios) &&
+                  formularios.map((form: any) => (
+                    <MenuItem key={form.id_form} value={form.id_form}>
+                      <Checkbox
+                        checked={selectedForms.includes(form.id_form)}
+                      />
+                      <ListItemText primary={form.nombre_form} />
+                    </MenuItem>
+                  ))}
               </Select>
             </div>
-            {/* <Input
-              type="text"
-              placeholder="Formulario"
-              name="formulario"
-              onChange={handleChange}
-              value={permiso.id_form}
-              required
-            /> */}
           </div>
           <DialogActions className="bg-gray-900">
             <Button
