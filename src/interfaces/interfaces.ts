@@ -20,3 +20,9 @@ export interface Permiso {
   descripcion: string;
   formulario?: any;
 }
+
+export interface Rol {
+  id_rol?: any;
+  nombre: string;
+  permisos?: any;
+}
