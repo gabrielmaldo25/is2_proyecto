@@ -2,18 +2,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { conn } from "src/utils/database";
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   const { method, body } = req;
   switch (method) {
     case "GET":
       try {
-        /* const query = `select u.id_user, u.name, u.email, upr.valido_desde valido_desde,
-        upr.valido_hasta valido_hasta, r.nombre descripcion_rol
-        from usuarios u left join usuarios_permisos_roles upr on u.id_user = upr.id_user
-        left join roles_permisos rp on upr.id_rol_permiso = rp.id_rol_permiso
-        left join roles r on r.id_rol = rp.id_rol
-        order by 1 asc;`; */
-        const query ="select * from usuarios"
+        const query = `select * from formularios`;
         const response = await conn.query(query);
         return res.json(response.rows);
       } catch (error: any) {
