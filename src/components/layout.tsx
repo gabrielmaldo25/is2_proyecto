@@ -116,7 +116,14 @@ export default function Layout({ children }: any) {
                           >
                             Permisos
                           </MenuItem>
-                          <MenuItem onClick={handleClose}>Roles</MenuItem>
+                          <MenuItem
+                            onClick={() => {
+                              router.push('/roles');
+                              handleClose();
+                            }}
+                          >
+                            Roles
+                          </MenuItem>
                         </Menu2>
                       </div>
                     </div>

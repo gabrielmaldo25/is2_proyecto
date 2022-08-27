@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react';
+import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import {
   Dialog,
   DialogActions,
@@ -12,12 +12,12 @@ import {
   SelectChangeEvent,
   Chip,
   Box,
-} from '@mui/material';
-import { Permiso } from 'src/interfaces/interfaces';
-import * as bcrypt from 'bcryptjs';
-import { GetServerSideProps } from 'next';
-import { isNilorEmpty } from 'src/helpers';
-import { xorBy } from 'lodash';
+} from "@mui/material";
+import { Rol } from "src/interfaces/interfaces";
+import * as bcrypt from "bcryptjs";
+import { GetServerSideProps } from "next";
+import { isNilorEmpty } from "src/helpers";
+import { xorBy } from "lodash";
 function Input({ ...props }: any) {
   return (
     <input
@@ -39,54 +39,55 @@ const MenuProps = {
 };
 
 const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
+  "Oliver Hansen",
+  "Van Henry",
+  "April Tucker",
+  "Ralph Hubbard",
+  "Omar Alexander",
+  "Carlos Abbott",
+  "Miriam Wagner",
+  "Bradley Wilkerson",
+  "Virginia Andrews",
+  "Kelly Snyder",
 ];
 
 type ChangeInputHandler = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const inititalState = {
-  descripcion: '',
-  forms: [],
+  nombre: "",
+  perms: [],
 };
 
 export default function Nuevo({
   open,
   setOpen,
-  setPermission,
-  permission = null,
-  refetchPermissions,
+  setRol,
+  rol = null,
+  refetchRoles,
 }: {
   open: any;
   setOpen: any;
-  setPermission: any;
-  permission?: any;
-  refetchPermissions: any;
+  setRol: any;
+  rol?: any;
+  refetchRoles: any;
 }) {
-  const [permiso, setPermiso] = useState<Permiso>(inititalState);
+  const [currentRol, setCurrentRol] = useState<Rol>(inititalState);
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [selectedForms, setSelectedForms] = React.useState<any[]>([]);
-  const [formularios, setFormularios] = useState([]);
+  const [selectedPermisos, setSelectedPermisos] = React.useState<any[]>([]);
+  const [permisos, setPermisos] = useState([]);
+
   useEffect(() => {
-    if (permission) {
-      setSelectedForms(permission.formularios.map((i: any) => i.id_form));
+    if (rol) {
+      setSelectedPermisos(rol.permisos.map((i: any) => i.id_permiso));
     }
-  }, [permission]);
+  }, [rol]);
   useEffect(() => {
     setLoading(true);
-    fetch('/api/formularios')
+    fetch("/api/permisos")
       .then((res) => res.json())
       .then((data) => {
-        setFormularios(data);
+        setPermisos(data);
         setLoading(false);
       });
   }, []);
@@ -94,44 +95,44 @@ export default function Nuevo({
   const handleSelectChange = (event: SelectChangeEvent<any>) => {
     const { value } = event.target;
 
-    setSelectedForms(value);
+    setSelectedPermisos(value);
   };
 
   useEffect(() => {
-    permission !== null ? setPermiso({ ...permission }) : null;
-  }, [permission]);
+    rol !== null ? setCurrentRol({ ...rol }) : null;
+  }, [rol]);
   const handleClose = () => {
-    permission ? setPermission(null) : null;
+    rol ? setRol(null) : null;
     setOpen(false);
   };
-  const createPermiso = async (permiso: Permiso) => {
-    let payload = { descripcion: permiso.descripcion, forms: selectedForms };
-    await fetch('http://localhost:3000/api/permisos', {
-      method: 'POST',
+  const createRol = async (currentRol: Rol) => {
+    let payload = { nombre: currentRol.nombre, perms: selectedPermisos };
+    await fetch("http://localhost:3000/api/roles", {
+      method: "POST",
       body: JSON.stringify(payload),
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
   };
-  const updatePermiso = async (id: any, permiso: Permiso) => {
-    let payload = { descripcion: permiso.descripcion, forms: selectedForms };
+  const updateRol = async (id: any, currentRol: Rol) => {
+    let payload = { nombre: currentRol.nombre, perms: selectedPermisos };
 
-    await fetch('http://localhost:3000/api/permisos/' + id, {
-      method: 'PUT',
+    await fetch("http://localhost:3000/api/roles/" + id, {
+      method: "PUT",
       body: JSON.stringify(payload),
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
   };
 
   const handleDelete = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/permisos/' + permission.id_permiso, {
-        method: 'DELETE',
+      const res = await fetch("http://localhost:3000/api/roles/" + rol.id_rol, {
+        method: "DELETE",
       });
-      refetchPermissions();
+      refetchRoles();
       setOpenDelete(false);
       setOpen(false);
     } catch (error) {
@@ -143,12 +144,13 @@ export default function Nuevo({
     setOpenDelete(false);
   };
 
-  const handleChange = ({ target: { name, value } }: ChangeInputHandler) => setPermiso({ ...permiso, [name]: value });
+  const handleChange = ({ target: { name, value } }: ChangeInputHandler) =>
+    setCurrentRol({ ...currentRol, [name]: value });
 
   function afterSaved() {
-    setPermiso(inititalState);
-    refetchPermissions();
-    setPermission(null);
+    setCurrentRol(inititalState);
+    refetchRoles();
+    setRol(null);
     setOpen(false);
   }
 
@@ -156,10 +158,10 @@ export default function Nuevo({
     e.preventDefault();
     setLoading(true);
     try {
-      if (permission?.hasOwnProperty('id_permiso')) {
-        updatePermiso(permission.id_permiso, permiso);
+      if (rol?.hasOwnProperty("id_rol")) {
+        updateRol(rol.id_rol, currentRol);
       } else {
-        createPermiso(permiso);
+        createRol(currentRol);
       }
       afterSaved();
     } catch (error) {
@@ -174,33 +176,37 @@ export default function Nuevo({
     <div>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle className="bg-gray-900 text-white">
-          {' '}
-          {permission ? 'Editar Permiso' : ' Agregar Permiso'}
+          {rol ? "Editar Rol" : " Agregar Rol"}
         </DialogTitle>
         <form onSubmit={handleSubmit}>
           <div className="bg-sand-300 space-y-4 w-full p-8 pt-4 ">
             <Input
               type="text"
-              placeholder="Descripcion"
-              name="descripcion"
+              placeholder="Nombre"
+              name="nombre"
               onChange={handleChange}
-              value={permiso.descripcion}
+              value={currentRol.nombre}
               required
             />
             <div className="flex flex-col">
-              <text className="text-lg">Selecciona la/s pantalla/s sobre la que el permiso puede operar</text>
+              <text className="text-lg">
+                Selecciona el/los permisos que tiene este rol{" "}
+              </text>
               <Select
                 multiple
-                value={selectedForms}
+                value={selectedPermisos}
                 onChange={handleSelectChange}
                 input={<OutlinedInput label="Tag" />}
                 renderValue={(selected) => (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                     {selected.map((id) => (
                       <Chip
                         key={id}
                         label={
-                          !isNilorEmpty(formularios) ? formularios.find((e) => e.id_form === id).nombre_form : null
+                          !isNilorEmpty(permisos)
+                            ? permisos.find((e) => e.id_permiso === id)
+                                .descripcion
+                            : null
                         }
                       />
                     ))}
@@ -208,11 +214,16 @@ export default function Nuevo({
                 )}
                 MenuProps={MenuProps}
               >
-                {!isNilorEmpty(formularios) &&
-                  formularios.map((form: any) => (
-                    <MenuItem key={form.id_form} value={form.id_form}>
-                      <Checkbox checked={selectedForms.includes(form.id_form)} />
-                      <ListItemText primary={form.nombre_form} />
+                {!isNilorEmpty(permisos) &&
+                  permisos.map((permiso: any) => (
+                    <MenuItem
+                      key={permiso.id_permiso}
+                      value={permiso.id_permiso}
+                    >
+                      <Checkbox
+                        checked={selectedPermisos.includes(permiso.id_permiso)}
+                      />
+                      <ListItemText primary={permiso.descripcion} />
                     </MenuItem>
                   ))}
               </Select>
@@ -228,22 +239,28 @@ export default function Nuevo({
             <Button
               className="normal-case hover:bg-green-600 group flex items-center rounded-md bg-green-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
               type="submit"
-              disabled={isNilorEmpty(formularios)}
+              disabled={isNilorEmpty(selectedPermisos)}
             >
-              {permission ? 'Actualizar' : 'Guardar'}
+              {rol ? "Actualizar" : "Guardar"}
             </Button>
-            {permission && (
-              <Button onClick={() => setOpenDelete(true)} className="normal-case" color="warning">
-                Eliminar Permiso
+            {rol && (
+              <Button
+                onClick={() => setOpenDelete(true)}
+                className="normal-case"
+                color="warning"
+              >
+                Eliminar Rol
               </Button>
             )}
           </DialogActions>
         </form>
       </Dialog>
       <Dialog open={openDelete} onClose={handleCloseDelete}>
-        <DialogTitle className="bg-gray-900 text-white">Eliminar Permiso</DialogTitle>
+        <DialogTitle className="bg-gray-900 text-white">
+          Eliminar Permiso
+        </DialogTitle>
         <div className="bg-gray-900 text-white p-4">
-          <text>Estas seguro de que quieres eliminar este permiso?</text>
+          <text>Estas seguro de que quieres eliminar este rol?</text>
         </div>
         <DialogActions className="bg-gray-900">
           <Button
