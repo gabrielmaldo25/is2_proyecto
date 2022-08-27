@@ -14,10 +14,9 @@ import {
   Box,
 } from '@mui/material';
 import { Permiso } from 'src/interfaces/interfaces';
-import * as bcrypt from 'bcryptjs';
-import { GetServerSideProps } from 'next';
 import { isNilorEmpty } from 'src/helpers';
-import { xorBy } from 'lodash';
+import Alert from '@mui/material/Alert';
+
 function Input({ ...props }: any) {
   return (
     <input
@@ -76,6 +75,8 @@ export default function Nuevo({
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedForms, setSelectedForms] = React.useState<any[]>([]);
   const [formularios, setFormularios] = useState([]);
+  const [status, setStatus] = useState(0);
+
   useEffect(() => {
     if (permission) {
       setSelectedForms(permission.formularios.map((i: any) => i.id_form));
@@ -99,11 +100,13 @@ export default function Nuevo({
 
   useEffect(() => {
     permission !== null ? setPermiso({ ...permission }) : null;
-  }, [permission]);
+  }, [permission, status]);
+
   const handleClose = () => {
     permission ? setPermission(null) : null;
     setOpen(false);
   };
+
   const createPermiso = async (permiso: Permiso) => {
     let payload = { descripcion: permiso.descripcion, forms: selectedForms };
     await fetch('http://localhost:3000/api/permisos', {
@@ -133,13 +136,16 @@ export default function Nuevo({
       });
       refetchPermissions();
       setOpenDelete(false);
-      setOpen(false);
+      setStatus(res.status);
+      if (status == 200) setOpen(false);
+      console.log(res.status + 'delete index');
     } catch (error) {
       console.log(error);
     }
   };
 
   const handleCloseDelete = () => {
+    setStatus(0);
     setOpenDelete(false);
   };
 
@@ -217,6 +223,11 @@ export default function Nuevo({
                   ))}
               </Select>
             </div>
+            {status == 400 && (
+              <Alert variant="outlined" severity="error">
+                Error al intentar borrar permiso. Verifique que no este en uso antes de eliminarlo.
+              </Alert>
+            )}
           </div>
           <DialogActions className="bg-gray-900">
             <Button
@@ -240,6 +251,7 @@ export default function Nuevo({
           </DialogActions>
         </form>
       </Dialog>
+
       <Dialog open={openDelete} onClose={handleCloseDelete}>
         <DialogTitle className="bg-gray-900 text-white">Eliminar Permiso</DialogTitle>
         <div className="bg-gray-900 text-white p-4">
