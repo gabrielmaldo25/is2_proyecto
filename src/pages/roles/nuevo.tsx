@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
+import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -12,12 +12,11 @@ import {
   SelectChangeEvent,
   Chip,
   Box,
-} from "@mui/material";
-import { Rol } from "src/interfaces/interfaces";
-import * as bcrypt from "bcryptjs";
-import { GetServerSideProps } from "next";
-import { isNilorEmpty } from "src/helpers";
-import { xorBy } from "lodash";
+} from '@mui/material';
+import { Rol } from 'src/interfaces/interfaces';
+import { isNilorEmpty } from 'src/helpers';
+import Alert from '@mui/material/Alert';
+
 function Input({ ...props }: any) {
   return (
     <input
@@ -39,22 +38,22 @@ const MenuProps = {
 };
 
 const names = [
-  "Oliver Hansen",
-  "Van Henry",
-  "April Tucker",
-  "Ralph Hubbard",
-  "Omar Alexander",
-  "Carlos Abbott",
-  "Miriam Wagner",
-  "Bradley Wilkerson",
-  "Virginia Andrews",
-  "Kelly Snyder",
+  'Oliver Hansen',
+  'Van Henry',
+  'April Tucker',
+  'Ralph Hubbard',
+  'Omar Alexander',
+  'Carlos Abbott',
+  'Miriam Wagner',
+  'Bradley Wilkerson',
+  'Virginia Andrews',
+  'Kelly Snyder',
 ];
 
 type ChangeInputHandler = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const inititalState = {
-  nombre: "",
+  nombre: '',
   perms: [],
 };
 
@@ -76,6 +75,7 @@ export default function Nuevo({
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedPermisos, setSelectedPermisos] = React.useState<any[]>([]);
   const [permisos, setPermisos] = useState([]);
+  const [status, setStatus] = useState(0);
 
   useEffect(() => {
     if (rol) {
@@ -84,7 +84,7 @@ export default function Nuevo({
   }, [rol]);
   useEffect(() => {
     setLoading(true);
-    fetch("/api/permisos")
+    fetch('/api/permisos')
       .then((res) => res.json())
       .then((data) => {
         setPermisos(data);
@@ -107,34 +107,35 @@ export default function Nuevo({
   };
   const createRol = async (currentRol: Rol) => {
     let payload = { nombre: currentRol.nombre, perms: selectedPermisos };
-    await fetch("http://localhost:3000/api/roles", {
-      method: "POST",
+    await fetch('http://localhost:3000/api/roles', {
+      method: 'POST',
       body: JSON.stringify(payload),
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
   };
   const updateRol = async (id: any, currentRol: Rol) => {
     let payload = { nombre: currentRol.nombre, perms: selectedPermisos };
 
-    await fetch("http://localhost:3000/api/roles/" + id, {
-      method: "PUT",
+    await fetch('http://localhost:3000/api/roles/' + id, {
+      method: 'PUT',
       body: JSON.stringify(payload),
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
   };
 
   const handleDelete = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/roles/" + rol.id_rol, {
-        method: "DELETE",
+      const res = await fetch('http://localhost:3000/api/roles/' + rol.id_rol, {
+        method: 'DELETE',
       });
       refetchRoles();
       setOpenDelete(false);
-      setOpen(false);
+      setStatus(res.status);
+      if (status == 200) setOpen(false);
     } catch (error) {
       console.log(error);
     }
@@ -158,7 +159,7 @@ export default function Nuevo({
     e.preventDefault();
     setLoading(true);
     try {
-      if (rol?.hasOwnProperty("id_rol")) {
+      if (rol?.hasOwnProperty('id_rol')) {
         updateRol(rol.id_rol, currentRol);
       } else {
         createRol(currentRol);
@@ -175,9 +176,7 @@ export default function Nuevo({
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle className="bg-gray-900 text-white">
-          {rol ? "Editar Rol" : " Agregar Rol"}
-        </DialogTitle>
+        <DialogTitle className="bg-gray-900 text-white">{rol ? 'Editar Rol' : ' Agregar Rol'}</DialogTitle>
         <form onSubmit={handleSubmit}>
           <div className="bg-sand-300 space-y-4 w-full p-8 pt-4 ">
             <Input
@@ -189,25 +188,18 @@ export default function Nuevo({
               required
             />
             <div className="flex flex-col">
-              <text className="text-lg">
-                Selecciona el/los permisos que tiene este rol{" "}
-              </text>
+              <text className="text-lg">Selecciona el/los permisos que tiene este rol </text>
               <Select
                 multiple
                 value={selectedPermisos}
                 onChange={handleSelectChange}
                 input={<OutlinedInput label="Tag" />}
                 renderValue={(selected) => (
-                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                     {selected.map((id) => (
                       <Chip
                         key={id}
-                        label={
-                          !isNilorEmpty(permisos)
-                            ? permisos.find((e) => e.id_permiso === id)
-                                .descripcion
-                            : null
-                        }
+                        label={!isNilorEmpty(permisos) ? permisos.find((e) => e.id_permiso === id).descripcion : null}
                       />
                     ))}
                   </Box>
@@ -216,18 +208,18 @@ export default function Nuevo({
               >
                 {!isNilorEmpty(permisos) &&
                   permisos.map((permiso: any) => (
-                    <MenuItem
-                      key={permiso.id_permiso}
-                      value={permiso.id_permiso}
-                    >
-                      <Checkbox
-                        checked={selectedPermisos.includes(permiso.id_permiso)}
-                      />
+                    <MenuItem key={permiso.id_permiso} value={permiso.id_permiso}>
+                      <Checkbox checked={selectedPermisos.includes(permiso.id_permiso)} />
                       <ListItemText primary={permiso.descripcion} />
                     </MenuItem>
                   ))}
               </Select>
             </div>
+            {status == 400 && (
+              <Alert variant="outlined" severity="error">
+                Error al intentar borrar permiso. Verifique que no este en uso antes de eliminarlo.
+              </Alert>
+            )}
           </div>
           <DialogActions className="bg-gray-900">
             <Button
@@ -241,14 +233,10 @@ export default function Nuevo({
               type="submit"
               disabled={isNilorEmpty(selectedPermisos)}
             >
-              {rol ? "Actualizar" : "Guardar"}
+              {rol ? 'Actualizar' : 'Guardar'}
             </Button>
             {rol && (
-              <Button
-                onClick={() => setOpenDelete(true)}
-                className="normal-case"
-                color="warning"
-              >
+              <Button onClick={() => setOpenDelete(true)} className="normal-case" color="warning">
                 Eliminar Rol
               </Button>
             )}
@@ -256,9 +244,7 @@ export default function Nuevo({
         </form>
       </Dialog>
       <Dialog open={openDelete} onClose={handleCloseDelete}>
-        <DialogTitle className="bg-gray-900 text-white">
-          Eliminar Permiso
-        </DialogTitle>
+        <DialogTitle className="bg-gray-900 text-white">Eliminar Permiso</DialogTitle>
         <div className="bg-gray-900 text-white p-4">
           <text>Estas seguro de que quieres eliminar este rol?</text>
         </div>

@@ -138,7 +138,6 @@ export default function Nuevo({
       setOpenDelete(false);
       setStatus(res.status);
       if (status == 200) setOpen(false);
-      console.log(res.status + 'delete index');
     } catch (error) {
       console.log(error);
     }
