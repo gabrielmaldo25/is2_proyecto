@@ -16,6 +16,7 @@ import {
 import { Permiso } from 'src/interfaces/interfaces';
 import { isNilorEmpty } from 'src/helpers';
 import Alert from '@mui/material/Alert';
+import fetchJson, { FetchError } from 'lib/fetchJson';
 
 function Input({ ...props }: any) {
   return (
@@ -36,19 +37,6 @@ const MenuProps = {
     },
   },
 };
-
-const names = [
-  'Oliver Hansen',
-  'Van Henry',
-  'April Tucker',
-  'Ralph Hubbard',
-  'Omar Alexander',
-  'Carlos Abbott',
-  'Miriam Wagner',
-  'Bradley Wilkerson',
-  'Virginia Andrews',
-  'Kelly Snyder',
-];
 
 type ChangeInputHandler = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
@@ -75,7 +63,7 @@ export default function Nuevo({
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedForms, setSelectedForms] = React.useState<any[]>([]);
   const [formularios, setFormularios] = useState([]);
-  const [status, setStatus] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<any>(null);
 
   useEffect(() => {
     if (permission) {
@@ -100,7 +88,7 @@ export default function Nuevo({
 
   useEffect(() => {
     permission !== null ? setPermiso({ ...permission }) : null;
-  }, [permission, status]);
+  }, [permission]);
 
   const handleClose = () => {
     permission ? setPermission(null) : null;
@@ -131,20 +119,22 @@ export default function Nuevo({
 
   const handleDelete = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/permisos/' + permission.id_permiso, {
+      const res = await fetchJson('api/permisos/' + permission.id_permiso, {
         method: 'DELETE',
       });
       refetchPermissions();
       setOpenDelete(false);
-      setStatus(res.status);
-      if (status == 200) setOpen(false);
     } catch (error) {
-      console.log(error);
+      handleCloseDelete();
+      if (error instanceof FetchError) {
+        setErrorMessage(error.data.message);
+      } else {
+        setErrorMessage('An unexpected error happened:' + error);
+      }
     }
   };
 
   const handleCloseDelete = () => {
-    setStatus(0);
     setOpenDelete(false);
   };
 
@@ -152,9 +142,9 @@ export default function Nuevo({
 
   function afterSaved() {
     setPermiso(inititalState);
-    refetchPermissions();
     setPermission(null);
     setOpen(false);
+    refetchPermissions();
   }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -179,7 +169,6 @@ export default function Nuevo({
     <div>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle className="bg-gray-900 text-white">
-          {' '}
           {permission ? 'Editar Permiso' : ' Agregar Permiso'}
         </DialogTitle>
         <form onSubmit={handleSubmit}>
@@ -222,8 +211,9 @@ export default function Nuevo({
                   ))}
               </Select>
             </div>
-            {status == 400 && (
+            {errorMessage && (
               <Alert variant="outlined" severity="error">
+                {errorMessage + `\n`}
                 Error al intentar borrar permiso. Verifique que no este en uso antes de eliminarlo.
               </Alert>
             )}

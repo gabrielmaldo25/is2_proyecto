@@ -12,12 +12,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (method) {
     case 'GET':
       try {
-        const text = 'SELECT * FROM permisos WHERE id_user = $1';
+        const text = 'SELECT * FROM permisos WHERE id_permiso = $1';
         const values = [id];
         const result = await conn.query(text, values);
-
         if (result.rowCount === 0) return res.status(404).json({ message: 'Permiso no encontrado' });
-
         return res.json(result.rows[0]);
       } catch (error: any) {
         return res.status(400).json({ message: error.message });
@@ -45,15 +43,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case 'DELETE':
       try {
         const values = [id];
-        /* let text = 'DELETE FROM permiso_formulario WHERE id_permiso = $1 RETURNING *';
-        await conn.query(text, values); */
-        let text = 'delete from permisos where id_permiso = $1';
-
-        const result = await conn.query(text, values);
-
-        if (result.rowCount === 0) return res.status(404).json({ message: 'Permiso no encontrado' });
-
-        return res.json(result.rows[0]);
+        let text = `SELECT * FROM roles_permisos WHERE id_permiso = $1`;
+        let res1 = await conn.query(text, values);
+        if (res1.rowCount > 0) return res.status(404).json({ message: 'No se puede borrar este permiso' });
+        else {
+          text = `delete from permiso_formulario where id_permiso = $1`;
+          await conn.query(text, values);
+          text = `delete from permisos where id_permiso = $1`;
+          await conn.query(text, values);
+        }
+        return;
       } catch (error: any) {
         return res.status(400).json({ message: error.message });
       }

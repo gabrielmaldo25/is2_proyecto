@@ -106,6 +106,7 @@ export default function IndexPermisos({ permisos }: Props) {
   const refreshData = () => {
     router.replace(router.asPath);
   };
+
   return (
     <Layout>
       <div>
@@ -141,8 +142,8 @@ export default function IndexPermisos({ permisos }: Props) {
                 <input
                   className="focus:ring-2 focus:ring-green-400 focus:outline-none appearance-none w-full text-sm leading-6 text-gray-900 placeholder-gray-900 rounded-md py-2 pl-10 ring-1 ring-sand-300 shadow-sm bg-sand-300"
                   type="text"
-                  aria-label="Buscar Usuarios"
-                  placeholder="Buscar Usuarios..."
+                  aria-label="Buscar Permiso"
+                  placeholder="Buscar Permiso..."
                 />
               </form>
             </header>
