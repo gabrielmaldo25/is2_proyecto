@@ -2,15 +2,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { conn } from "src/utils/database";
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   const { method, body } = req;
-  console.log("ENTRA:");
   switch (method) {
     case "GET":
       try {
         const query = `select * from formularios`;
         const response = await conn.query(query);
-        console.log("RESS: ", response);
         return res.json(response.rows);
       } catch (error: any) {
         return res.status(400).json({ message: error.message });

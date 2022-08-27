@@ -18,7 +18,7 @@ export interface Usuario {
 export interface Permiso {
   id_permiso?: any;
   descripcion: string;
-  formulario?: any;
+  formularios?: any;
 }
 
 export interface Rol {
