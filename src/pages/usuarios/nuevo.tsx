@@ -1,10 +1,4 @@
-import React, {
-  ChangeEvent,
-  FormEvent,
-  useState,
-  useEffect,
-  useRef,
-} from "react";
+import React, { ChangeEvent, FormEvent, useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -13,10 +7,12 @@ import {
   DialogContentText,
   Select,
   MenuItem,
-} from "@mui/material";
-import { Usuario } from "src/interfaces/interfaces";
-import * as bcrypt from "bcryptjs";
-import { isNilorEmpty } from "src/helpers";
+  ListItemText,
+  SelectChangeEvent,
+} from '@mui/material';
+import { Usuario } from 'src/interfaces/interfaces';
+import * as bcrypt from 'bcryptjs';
+import { isNilorEmpty } from 'src/helpers';
 function Input({ ...props }: any) {
   return (
     <input
@@ -29,9 +25,9 @@ function Input({ ...props }: any) {
 type ChangeInputHandler = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const inititalState = {
-  name: "",
-  email: "",
-  password: "",
+  name: '',
+  email: '',
+  password: '',
 };
 
 export default function Nuevo({
@@ -49,51 +45,66 @@ export default function Nuevo({
 }) {
   const [usuario, setUsuario] = useState<Usuario>(inititalState);
   const [loading, setLoading] = useState(false);
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const passwordRef = useRef(user?.password || null);
   const [openDelete, setOpenDelete] = useState(false);
+  const [roles, setRoles] = useState<any>([]);
+  const [selectedRol, setSelectedRol] = React.useState<any>({ id: null, valido_hasta: null });
 
   useEffect(() => {
-    user !== null ? setUsuario({ ...user, password: "" }) : null;
+    if (user && user.rol.id_rol) {
+      setSelectedRol({ id: user.rol.id_rol, valido_hasta: user.rol.valido_hasta });
+    }
+  }, [user]);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch('/api/roles')
+      .then((res) => res.json())
+      .then((data) => {
+        setRoles(data);
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    user !== null ? setUsuario({ ...user, password: '' }) : null;
   }, [user]);
   const handleClose = () => {
     user ? setUser(null) : null;
     setOpen(false);
   };
-  const createUser = async (usuario: Usuario) => {
+  const createUser = async (usuario: Usuario, rol?: any) => {
     const { password, ...restOfUser } = usuario;
     const encrypted = await bcrypt.hash(password, 5);
 
-    await fetch("http://localhost:3000/api/usuarios", {
-      method: "POST",
-      body: JSON.stringify({ password: encrypted, ...restOfUser }),
+    await fetch('http://localhost:3000/api/usuarios', {
+      method: 'POST',
+      body: JSON.stringify({ password: encrypted, rol, ...restOfUser }),
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
   };
-  const updateUser = async (id: any, usuario: Usuario) => {
+  const updateUser = async (id: any, usuario: Usuario, rol?: any) => {
     const { password, ...restOfUser } = usuario;
-    let encrypted = "";
+    let encrypted = '';
     if (!isNilorEmpty(usuario.password)) {
       encrypted = await bcrypt.hash(password, 5);
     }
-    await fetch("http://localhost:3000/api/usuarios/" + id, {
-      method: "PUT",
+    await fetch('http://localhost:3000/api/usuarios/' + id, {
+      method: 'PUT',
       body: JSON.stringify({ password: encrypted, ...restOfUser }),
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
   };
   const handleDelete = async () => {
     try {
-      const res = await fetch(
-        "http://localhost:3000/api/usuarios/" + user.id_user,
-        {
-          method: "DELETE",
-        }
-      );
+      const res = await fetch('http://localhost:3000/api/usuarios/' + user.id_user, {
+        method: 'DELETE',
+      });
       refetchUsers();
       setOpenDelete(false);
       setOpen(false);
@@ -107,8 +118,14 @@ export default function Nuevo({
     setOpenDelete(false);
   };
 
-  const handleChange = ({ target: { name, value } }: ChangeInputHandler) =>
-    setUsuario({ ...usuario, [name]: value });
+  const handleChange = ({ target: { name, value } }: ChangeInputHandler) => setUsuario({ ...usuario, [name]: value });
+
+  const handleSelectChange = (event: SelectChangeEvent<any>) => {
+    const { value } = event.target;
+    console.log('VALUE: ' + value);
+
+    setSelectedRol({ ...selectedRol, id: value });
+  };
 
   function compararPasswords(pass1: string, pass2: string) {
     return pass1 === pass2;
@@ -116,32 +133,35 @@ export default function Nuevo({
 
   function afterSaved() {
     setUsuario(inititalState);
-    setPasswordConfirmation("");
+    setPasswordConfirmation('');
     refetchUsers();
     setOpen(false);
   }
+  useEffect(() => {
+    console.log('IS NULL; ', isNilorEmpty(selectedRol));
+  }, [selectedRol]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      if (user?.hasOwnProperty("id_user")) {
+      if (user?.hasOwnProperty('id_user')) {
         if (!isNilorEmpty(usuario.password))
           if (compararPasswords(usuario.password, passwordConfirmation)) {
             updateUser(user.id_user, usuario);
             afterSaved();
-          } else alert("Contraseñas deben coincidir");
+          } else alert('Contraseñas deben coincidir');
         else {
           updateUser(user.id_user, usuario);
           afterSaved();
         }
       } else {
         if (compararPasswords(usuario.password, passwordConfirmation)) {
-          createUser(usuario);
+          createUser(usuario, selectedRol);
           afterSaved();
         } else {
-          alert("Contraseñas deben coincidir");
+          alert('Contraseñas deben coincidir');
         }
       }
     } catch (error) {
@@ -153,19 +173,10 @@ export default function Nuevo({
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle className="bg-gray-900 text-white">
-          Agregar Usuario
-        </DialogTitle>
+        <DialogTitle className="bg-gray-900 text-white">Agregar Usuario</DialogTitle>
         <form onSubmit={handleSubmit}>
           <div className="bg-sand-300 space-y-4 w-full p-8 pt-4 ">
-            <Input
-              type="text"
-              placeholder="Nombre"
-              name="name"
-              onChange={handleChange}
-              value={usuario.name}
-              required
-            />
+            <Input type="text" placeholder="Nombre" name="name" onChange={handleChange} value={usuario.name} required />
             <Input
               type="email"
               placeholder="Email"
@@ -176,43 +187,48 @@ export default function Nuevo({
             />
             <Input
               type="password"
-              placeholder={user ? "Nueva Contraseña" : "Contraseña"}
+              placeholder={user ? 'Nueva Contraseña' : 'Contraseña'}
               name="password"
               onChange={handleChange}
               required={user?.id_user ? false : true}
             />
             <Input
               type="password"
-              placeholder={
-                user ? "Confirmar Nueva Contraseña" : "Confirmar Contraseña"
-              }
+              placeholder={user ? 'Confirmar Nueva Contraseña' : 'Confirmar Contraseña'}
               name="passwordConfirmation"
               required={user?.id_user ? false : true}
-              onChange={({ target: { value } }: ChangeInputHandler) =>
-                setPasswordConfirmation(value)
-              }
+              onChange={({ target: { value } }: ChangeInputHandler) => setPasswordConfirmation(value)}
               value={passwordConfirmation}
             />
             <div className="flex flex-col">
-              <text className="text-lg">
-                Puedes seleccionar un rol para este usuario
-              </text>
+              <text className="text-lg">Puedes seleccionar un rol para este usuario</text>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                //value={age}
-                //onChange={handleChange}
+                value={selectedRol.id}
                 size="small"
+                onChange={handleSelectChange}
               >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                <MenuItem value={''}>
+                  <ListItemText primary={'Ninguno'} />
+                </MenuItem>
+                {!isNilorEmpty(roles) &&
+                  roles.map((rol: any) => (
+                    <MenuItem key={rol.id_rol} value={rol.id_rol}>
+                      <ListItemText primary={rol.nombre} />
+                    </MenuItem>
+                  ))}
               </Select>
-              <text className="text-lg bg-transparent">Rol válido hasta </text>
-              <input
-                type="date"
-                className="bg-transparent ring-1 p-2 rounded-sm ring-gray-500"
-              />
+              {!isNilorEmpty(selectedRol.id) && (
+                <>
+                  <text className="text-lg bg-transparent">Rol válido hasta </text>
+                  <input
+                    onChange={(e: any) => setSelectedRol({ ...selectedRol, valido_hasta: e.target.value })}
+                    type="date"
+                    className="bg-transparent ring-1 p-2 rounded-sm ring-gray-500"
+                  />
+                </>
+              )}
             </div>
           </div>
           <DialogActions className="bg-gray-900">
@@ -226,14 +242,10 @@ export default function Nuevo({
               className="normal-case hover:bg-green-600 group flex items-center rounded-md bg-green-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
               type="submit"
             >
-              {user ? "Actualizar" : "Guardar"}
+              {user ? 'Actualizar' : 'Guardar'}
             </Button>
             {user && (
-              <Button
-                onClick={() => setOpenDelete(true)}
-                className="normal-case"
-                color="warning"
-              >
+              <Button onClick={() => setOpenDelete(true)} className="normal-case" color="warning">
                 Eliminar Usuario
               </Button>
             )}
@@ -241,9 +253,7 @@ export default function Nuevo({
         </form>
       </Dialog>
       <Dialog open={openDelete} onClose={handleCloseDelete}>
-        <DialogTitle className="bg-gray-900 text-white">
-          Eliminar Usuario
-        </DialogTitle>
+        <DialogTitle className="bg-gray-900 text-white">Eliminar Usuario</DialogTitle>
         <div className="bg-gray-900 text-white p-4">
           <text>Estas seguro de que quieres eliminar este usuario?</text>
         </div>
