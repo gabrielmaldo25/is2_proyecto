@@ -25,14 +25,21 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     case "PUT":
       try {
-        const { name, email, password } = body;
-        let text = "UPDATE usuarios SET name = $1, email = $2 ";
-        if (!isNilorEmpty(password)) text += ", password = $4 ";
-        text += "WHERE id_user = $3 RETURNING *";
-        let values = [name, email, id];
+        const { name, email, password, rol, id_user } = body;
+        console.log(JSON.stringify(body) + "body 29")
+        let query = 'UPDATE usuarios SET name = $1, email = $2';
+        if (!isNilorEmpty(password)) query += ", password = $4 ";
+        query += "WHERE id_user = $3 RETURNING *";
+        let values = [name, email, id_user];
         if (!isNilorEmpty(password)) values.push(password);
-        const result = await conn.query(text, values);
-        return res.json(result.rows[0]);
+        let response = await conn.query(query, values);
+
+        console.log(response + "response 36")
+        query = 'UPDATE usuario_rol SET valido_hasta = $1 WHERE id_user = $2 AND id_rol = $3';
+        values = [rol.valido_hasta, response.rows[0].id_user, rol.id_rol, ];
+        response = await conn.query(query, values);
+        // console.log(JSON.stringify(response) + "response 41")
+        return res.json(response.rows[0]);
       } catch (error: any) {
         return res.status(400).json({ message: error.message });
       }

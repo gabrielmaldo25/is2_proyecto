@@ -232,7 +232,7 @@ export default function indexUsers({ usuarios }: Props) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const res = await fetch('http://localhost:3000/api/usuarios');
   const usuarios = await res.json();
-  console.log('USUARIOS: ', usuarios);
+  // console.log('USUARIOS: ', usuarios);
   return {
     props: { usuarios },
   };

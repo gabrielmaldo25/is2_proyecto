@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { conn } from 'src/utils/database';
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   const { method, body } = req;
   switch (method) {
@@ -24,7 +25,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     case 'POST':
       try {
         const { name, email, password, rol } = body;
-        console.log('ROL :', rol);
+        // console.log('ROL :', rol);
         let query = 'INSERT INTO usuarios(name, email, password) VALUES ($1, $2, $3) RETURNING *';
         let values = [name, email, password];
         let response = await conn.query(query, values);
