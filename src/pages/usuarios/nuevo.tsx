@@ -94,7 +94,7 @@ export default function Nuevo({
     }
     await fetch('http://localhost:3000/api/usuarios/' + id, {
       method: 'PUT',
-      body: JSON.stringify({ password: encrypted, ...restOfUser }),
+      body: JSON.stringify({ password: encrypted, new_rol: rol, ...restOfUser }),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -104,6 +104,10 @@ export default function Nuevo({
     try {
       const res = await fetch('http://localhost:3000/api/usuarios/' + user.id_user, {
         method: 'DELETE',
+        body: JSON.stringify(usuario.rol),
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
       refetchUsers();
       setOpenDelete(false);
@@ -149,11 +153,11 @@ export default function Nuevo({
       if (user?.hasOwnProperty('id_user')) {
         if (!isNilorEmpty(usuario.password))
           if (compararPasswords(usuario.password, passwordConfirmation)) {
-            updateUser(user.id_user, usuario);
+            updateUser(user.id_user, usuario, selectedRol);
             afterSaved();
           } else alert('Contraseñas deben coincidir');
         else {
-          updateUser(user.id_user, usuario);
+          updateUser(user.id_user, usuario, selectedRol);
           afterSaved();
         }
       } else {
