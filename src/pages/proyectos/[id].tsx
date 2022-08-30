@@ -1,15 +1,28 @@
 import { useEffect, useState } from 'react';
 import Layout from 'src/components/layout';
-
+import { useRouter } from 'next/router';
+import { isNilorEmpty } from 'src/helpers';
 export default function test() {
-  const [proyectos, setProyectos] = useState<any>([]);
+  const router = useRouter();
+  const [proyecto, setProyecto] = useState<any>({});
+
+  const loadTask = async (id: string) => {
+    const res = await fetch('http://localhost:3000/api/proyectos/' + id);
+    const task = await res.json();
+    console.log('ABER: ', task);
+    setProyecto(task);
+  };
   useEffect(() => {
+    if (typeof router.query.id === 'string') loadTask(router.query.id);
+  }, [router.query]);
+
+  /*  useEffect(() => {
     fetch('/api/proyectos')
       .then((res) => res.json())
       .then((data) => {
-        setProyectos(data);
+        setProyecto(data);
       });
-  }, []);
+  }, []); */
   const projects = [
     {
       name: 'Proyecto 1',
@@ -36,6 +49,8 @@ export default function test() {
     },
     { name: 'Story 2', state: 'Doing', projectName: 'Proyecto 1' },
   ];
+
+  if (isNilorEmpty(proyecto)) return <text>No hay nada</text>;
   return (
     <Layout>
       <div>
@@ -43,7 +58,7 @@ export default function test() {
           <section>
             <header className="bg-gray-900 space-y-4 p-4 sm:px-8 sm:py-6 lg:p-4 xl:px-8 xl:py-6">
               <div className="flex items-center justify-between">
-                <h2 className="font-semibold text-white">Historias de Usuario</h2>
+                <h1 className="text-3xl font-bold text-white">{proyecto.nombre} </h1>
                 <a
                   href="/new"
                   className="hover:bg-green-400 group flex items-center rounded-md bg-green-600 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"

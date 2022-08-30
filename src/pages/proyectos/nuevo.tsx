@@ -64,23 +64,27 @@ export default function Nuevo({
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedParticipantes, setSelectedParticipantes] = React.useState<any[]>([]);
-  const [formularios, setFormularios] = useState([]);
+  const [usuarios, setUsuarios] = useState<any>([]);
   const [errorMessage, setErrorMessage] = useState<any>(null);
 
   useEffect(() => {
     if (project) {
-      setSelectedParticipantes(project.formularios.map((i: any) => i.id_form));
+      setSelectedParticipantes(project.usuarios.map((i: any) => i.id_form));
     }
   }, [project]);
   useEffect(() => {
     setLoading(true);
-    fetch('/api/formularios')
+    fetch('/api/usuarios')
       .then((res) => res.json())
       .then((data) => {
-        setFormularios(data);
+        setUsuarios(data);
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    console.log('USUARIOS: ', usuarios);
+  }, [usuarios]);
 
   const handleSelectChange = (event: SelectChangeEvent<any>) => {
     const { value } = event.target;
@@ -200,22 +204,17 @@ export default function Nuevo({
                 renderValue={(selected) => (
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                     {selected.map((id) => (
-                      <Chip
-                        key={id}
-                        label={
-                          !isNilorEmpty(formularios) ? formularios.find((e) => e.id_form === id).nombre_form : null
-                        }
-                      />
+                      <Chip key={id} label={usuarios.find((e) => e.id_user === id).name} />
                     ))}
                   </Box>
                 )}
                 MenuProps={MenuProps}
               >
-                {!isNilorEmpty(formularios) &&
-                  formularios.map((form: any) => (
-                    <MenuItem key={form.id_form} value={form.id_form}>
-                      <Checkbox checked={selectedParticipantes.includes(form.id_form)} />
-                      <ListItemText primary={form.nombre_form} />
+                {!isNilorEmpty(usuarios) &&
+                  usuarios.map((user: any) => (
+                    <MenuItem key={user.id_user} value={user.id_user}>
+                      <Checkbox checked={selectedParticipantes.includes(user.id_user)} />
+                      <ListItemText primary={user.name} secondary={user.email} />
                     </MenuItem>
                   ))}
               </Select>
@@ -223,7 +222,7 @@ export default function Nuevo({
             {errorMessage && (
               <Alert variant="outlined" severity="error">
                 {errorMessage + `\n`}
-                Error al intentar borrar proyecto. Verifique que no este en uso antes de eliminarlo.
+                Error al intentar borrar proyecto.
               </Alert>
             )}
           </div>
@@ -237,7 +236,7 @@ export default function Nuevo({
             <Button
               className="normal-case hover:bg-green-600 group flex items-center rounded-md bg-green-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
               type="submit"
-              disabled={isNilorEmpty(formularios)}
+              disabled={isNilorEmpty(usuarios)}
             >
               {project ? 'Actualizar' : 'Guardar'}
             </Button>

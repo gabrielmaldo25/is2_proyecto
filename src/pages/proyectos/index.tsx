@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Layout from 'src/components/layout';
 import Nuevo from './nuevo';
 import { useRouter } from 'next/router';
+
 export default function test() {
   const [proyectos, setProyectos] = useState<any>([]);
   const [open, setOpen] = useState(false);
@@ -18,32 +19,7 @@ export default function test() {
         setProyectos(data);
       });
   }, []);
-  const projects = [
-    {
-      name: 'Proyecto 1',
-      category: 'Categoria 1',
-      users: [
-        {
-          avatar:
-            'https://lh3.googleusercontent.com/2hDpuTi-0AMKvoZJGd-yKWvK4tKdQr_kLIpB_qSeMau2TNGCNidAosMEvrEXFO9G6tmlFlPQplpwiqirgrIPWnCKMvElaYgI-HiVvXc=w600',
-          name: 'GG',
-        },
-        {
-          avatar: 'https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg',
-          name: 'HH',
-        },
-      ],
-    },
-    { name: 'Proyecto 2', category: 'Categoria 2' },
-  ];
-  const thisUserStories = [
-    {
-      name: 'Story 1',
-      state: 'To do',
-      projectName: 'Proyecto 1',
-    },
-    { name: 'Story 2', state: 'Doing', projectName: 'Proyecto 1' },
-  ];
+
   return (
     <Layout>
       <div>
@@ -89,7 +65,8 @@ export default function test() {
                 {proyectos.map((project: any) => (
                   <li>
                     <a
-                      /* :href="project.url" */ className="hover:bg-green-400 hover:ring-1 hover:ring-white hover:shadow-md group rounded-md p-3 bg-green-300  shadow-sm flex"
+                      onClick={() => router.push(`/proyectos/${project.id_proyecto}`)}
+                      className="hover:bg-green-400 hover:ring-1 hover:ring-white hover:shadow-md group rounded-md p-3 bg-green-300  shadow-sm flex"
                     >
                       <div className="grid sm:block lg:grid xl:block grid-cols-2 grid-rows-2 items-center">
                         <div>
