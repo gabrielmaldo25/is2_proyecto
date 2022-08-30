@@ -51,7 +51,7 @@ export default function Layout({ children }: any) {
   };
 
   const navigation = [
-    { name: 'Proyectos', href: '/', current: true },
+    { name: 'Proyectos', href: '/proyectos', current: true },
     { name: 'Usuarios', href: '/usuarios', current: false },
     { name: 'Seguridad', href: '#', current: false },
   ];
@@ -263,7 +263,7 @@ export default function Layout({ children }: any) {
 
         <main>
           <div className="bg-black h-screen">
-            <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 ">{children}</div>
+            <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 bg-black">{children}</div>
           </div>
         </main>
       </div>

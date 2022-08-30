@@ -26,3 +26,10 @@ export interface Rol {
   nombre: string;
   permisos?: any;
 }
+
+export interface Proyecto {
+  id_proyecto?: any;
+  nombre: string;
+  descripcion?: any;
+  participantes?: any;
+}
