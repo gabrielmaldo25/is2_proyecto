@@ -9,15 +9,16 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   switch (method) {
     case 'GET':
       try {
-        /* let query = `select pr.*, json_agg(u.*) participantes
-from proyectos pr
-left join usuarios_proyectos up
-on pr.id_proyecto = up.id_proyecto
-left join usuarios u 
-on u.id_user = up.id_user
-group by pr.id_proyecto
-order by 1 asc`; */
-        const query = `select * from proyectos`;
+        let query = `select pr.*, json_agg(row_to_json(u)::jsonb - 'password') filter (where u.id_user is not null) participantes
+        from proyectos pr
+        left join usuarios_proyectos up
+        on pr.id_proyecto = up.id_proyecto
+        left join usuarios u 
+        on u.id_user = up.id_user
+        group by pr.id_proyecto
+        order by 1 asc
+            `;
+        //const query = `select * from proyectos`;
         const response = await conn.query(query);
         return res.json(response.rows);
       } catch (error: any) {

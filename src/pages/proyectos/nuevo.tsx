@@ -68,8 +68,9 @@ export default function Nuevo({
   const [errorMessage, setErrorMessage] = useState<any>(null);
 
   useEffect(() => {
-    if (project) {
-      setSelectedParticipantes(project.usuarios.map((i: any) => i.id_form));
+    console.log('PROYECTO: ', project);
+    if (project && !isNilorEmpty(project.participantes)) {
+      setSelectedParticipantes(project.participantes.map((i: any) => i.id_user));
     }
   }, [project]);
   useEffect(() => {
@@ -204,7 +205,7 @@ export default function Nuevo({
                 renderValue={(selected) => (
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                     {selected.map((id) => (
-                      <Chip key={id} label={usuarios.find((e) => e.id_user === id).name} />
+                      <Chip key={id} label={usuarios.find((e: any) => e.id_user === id).name} />
                     ))}
                   </Box>
                 )}

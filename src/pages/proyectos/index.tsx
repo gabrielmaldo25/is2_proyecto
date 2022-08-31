@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import Layout from 'src/components/layout';
 import Nuevo from './nuevo';
 import { useRouter } from 'next/router';
+import EditIcon from '@mui/icons-material/Edit';
+import InitialIcon from 'src/components/iniciales';
 
 export default function test() {
   const [proyectos, setProyectos] = useState<any>([]);
@@ -64,45 +66,46 @@ export default function test() {
               <>
                 {proyectos.map((project: any) => (
                   <li>
-                    <a
-                      onClick={() => router.push(`/proyectos/${project.id_proyecto}`)}
-                      className="hover:bg-green-400 hover:ring-1 hover:ring-white hover:shadow-md group rounded-md p-3 bg-green-300  shadow-sm flex"
-                    >
-                      <div className="grid sm:block lg:grid xl:block grid-cols-2 grid-rows-2 items-center">
+                    <a className="hover:bg-green-400 hover:ring-1 hover:ring-white hover:shadow-md group rounded-md p-3 bg-green-300  shadow-sm flex flex-row justify-between">
+                      <div
+                        onClick={() => router.push(`/proyectos/${project.id_proyecto}`)}
+                        className="flex flex-1  flex-col"
+                      >
                         <div>
                           <dt className="sr-only">Nombre</dt>
                           <dd className="group-hover:text-white font-semibold text-slate-900">{project.nombre}</dd>
-                        </div>
-                        <div>
                           <dt className="sr-only">Descripcion</dt>
                           <dd className="group-hover:text-white text-gray-900">{project.descripcion}</dd>
+                          <div className="flex row-start-1 row-end-3 sm:mt-4 lg:mt-0 xl:mt-4">
+                            <>
+                              <dt className="sr-only">Users</dt>
+                              {[
+                                {
+                                  avatar:
+                                    'https://lh3.googleusercontent.com/2hDpuTi-0AMKvoZJGd-yKWvK4tKdQr_kLIpB_qSeMau2TNGCNidAosMEvrEXFO9G6tmlFlPQplpwiqirgrIPWnCKMvElaYgI-HiVvXc=w600',
+                                  name: 'GG',
+                                },
+                                {
+                                  avatar: 'https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg',
+                                  name: 'HH',
+                                },
+                              ].map((user) => (
+                                <dd className="flex justify-end sm:justify-start lg:justify-end xl:justify-start -space-x-1.5">
+                                  <InitialIcon initials={user.name} />
+                                </dd>
+                              ))}
+                            </>
+                          </div>
                         </div>
-
-                        <div className="flex col-start-2 row-start-1 row-end-3 sm:mt-4 lg:mt-0 xl:mt-4">
-                          <>
-                            <dt className="sr-only">Users</dt>
-                            {[
-                              {
-                                avatar:
-                                  'https://lh3.googleusercontent.com/2hDpuTi-0AMKvoZJGd-yKWvK4tKdQr_kLIpB_qSeMau2TNGCNidAosMEvrEXFO9G6tmlFlPQplpwiqirgrIPWnCKMvElaYgI-HiVvXc=w600',
-                                name: 'GG',
-                              },
-                              {
-                                avatar: 'https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg',
-                                name: 'HH',
-                              },
-                            ].map((user) => (
-                              <dd className="flex justify-end sm:justify-start lg:justify-end xl:justify-start -space-x-1.5">
-                                <img
-                                  src={user.avatar}
-                                  alt={user.name}
-                                  className="w-6 h-6 rounded-full bg-slate-100 ring-2 ring-white"
-                                  loading="lazy"
-                                />
-                              </dd>
-                            ))}
-                          </>
-                        </div>
+                      </div>
+                      <div>
+                        <EditIcon
+                          sx={{ color: 'white', '&:hover': { color: 'black' } }}
+                          onClick={() => {
+                            setProject(project);
+                            setOpen(true);
+                          }}
+                        />
                       </div>
                     </a>
                   </li>
