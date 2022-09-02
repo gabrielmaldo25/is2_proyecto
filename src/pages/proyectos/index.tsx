@@ -11,15 +11,15 @@ export default function test() {
   const [project, setProject] = useState<any>(null);
   const router = useRouter();
   const refreshData = () => {
-    router.replace(router.asPath);
-  };
-
-  useEffect(() => {
     fetch('/api/proyectos')
       .then((res) => res.json())
       .then((data) => {
         setProyectos(data);
       });
+  };
+
+  useEffect(() => {
+    refreshData();
   }, []);
 
   return (
@@ -113,7 +113,7 @@ export default function test() {
 
                 <li className="flex">
                   <a
-                    href="/new"
+                    onClick={() => setOpen(true)}
                     className="hover:border-green-600 hover:border-solid hover:bg-white hover:text-green-600 group w-full flex flex-col items-center justify-center rounded-md border-2 border-dashed border-slate-300 text-sm leading-6 text-slate-900 font-medium py-3"
                   >
                     <svg

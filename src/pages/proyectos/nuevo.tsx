@@ -130,7 +130,7 @@ export default function Nuevo({
         method: 'DELETE',
       });
       refetchProjects();
-      setOpenDelete(false);
+      setOpen(false);
     } catch (error) {
       handleCloseDelete();
       if (error instanceof FetchError) {
