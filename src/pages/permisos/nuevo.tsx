@@ -72,7 +72,7 @@ export default function Nuevo({
   }, [permission]);
   useEffect(() => {
     setLoading(true);
-    fetch('/api/formularios')
+    fetch('/api/extra/formularios')
       .then((res) => res.json())
       .then((data) => {
         setFormularios(data);

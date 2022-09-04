@@ -33,3 +33,13 @@ export interface Proyecto {
   descripcion?: any;
   participantes?: any;
 }
+
+export interface UserStory {
+  id_us?: any;
+  id_sprint?: any;
+  nombre: string;
+  id_estado: any;
+  id_user?: any;
+  id_proyecto: any;
+  descripcion?: any;
+}
