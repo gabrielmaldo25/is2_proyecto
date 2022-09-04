@@ -213,8 +213,8 @@ export default function Nuevo({
             </div>
             {errorMessage && (
               <Alert variant="outlined" severity="error">
-                {errorMessage + `\n`}
-                Error al intentar borrar permiso. Verifique que no este en uso antes de eliminarlo.
+                {errorMessage + `.\n`}
+                Verifique que no este en uso antes de eliminarlo.
               </Alert>
             )}
           </div>

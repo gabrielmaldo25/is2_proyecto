@@ -26,7 +26,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case "PUT":
       try {
         const { name, email, password, rol, id_user, new_rol } = body;
-
+        console.log(JSON.stringify(rol) + "rooool");
         let query = 'UPDATE usuarios SET name = $1, email = $2';
         if (!isNilorEmpty(password)) query += ", password = $4 ";
         query += "WHERE id_user = $3 RETURNING *";
@@ -39,7 +39,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         await conn.query(query, values);
 
         query = 'INSERT INTO usuario_rol (id_user, id_rol, valido_desde, valido_hasta) VALUES ($1, $2, $3, $4)';
-        values = [id_user, new_rol.id, rol[0].valido_desde, new_rol.valido_hasta];
+        values = [id_user, new_rol.id, rol[0].valido_desde? rol[0].valido_desde : new Date().toLocaleDateString(), new_rol.valido_hasta];
         console.log(values + "values ")
         response = await conn.query(query, values);
 
