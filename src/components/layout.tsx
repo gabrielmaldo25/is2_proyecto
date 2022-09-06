@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { MenuIcon, XIcon } from '@heroicons/react/outline';
 import { userServiceFactory } from '../../clientServices/userService';
@@ -14,11 +14,13 @@ import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import List from '@mui/material/List';
+import { screens } from '../pages/api/login';
 
 export default function Layout({ children }: any) {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
+  const [nav, setNav] = useState([]);
 
   const [openMob, setOpenMob] = React.useState(true);
 
@@ -39,6 +41,8 @@ export default function Layout({ children }: any) {
     redirectTo: '/login',
     redirectIfFound: false,
   });
+
+  useEffect(() => {});
 
   const onLogout = async (e: any) => {
     e.preventDefault();
@@ -64,6 +68,7 @@ export default function Layout({ children }: any) {
   function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ');
   }
+
   return (
     <>
       <div className="min-h-full">
@@ -75,7 +80,7 @@ export default function Layout({ children }: any) {
                   <div className="flex items-center">
                     <div className="hidden md:block">
                       <div className=" flex items-baseline space-x-4">
-                        {navigation.slice(0, 2).map((item) => (
+                        {/* {navigation.slice(0, 2).map((item) => (
                           <a
                             key={item.name}
                             href={item.href}
@@ -88,17 +93,47 @@ export default function Layout({ children }: any) {
                           >
                             {item.name}
                           </a>
-                        ))}
-                        <a
-                          key={'seguridad'}
-                          className={classNames(
-                            ' hover:bg-green-400 text-white',
-                            'px-3 py-2 rounded-md text-sm font-medium',
-                          )}
-                          onClick={handleClick}
-                        >
-                          Seguridad
-                        </a>
+                        ))} */}
+                        {user?.proyectos ? (
+                          <a
+                            key={navigation[0].name}
+                            href={navigation[0].href}
+                            className={classNames(
+                              navigation[0].href.toLowerCase() == router.pathname
+                                ? 'bg-green-600 text-white'
+                                : ' hover:bg-green-400 text-white',
+                              'px-3 py-2 rounded-md text-sm font-medium',
+                            )}
+                          >
+                            {navigation[0].name}
+                          </a>
+                        ) : null}
+                        {user?.usuarios ? (
+                          <a
+                            key={navigation[1].name}
+                            href={navigation[1].href}
+                            className={classNames(
+                              navigation[1].href.toLowerCase() == router.pathname
+                                ? 'bg-green-600 text-white'
+                                : ' hover:bg-green-400 text-white',
+                              'px-3 py-2 rounded-md text-sm font-medium',
+                            )}
+                          >
+                            {navigation[1].name}
+                          </a>
+                        ) : null}
+                        {user?.seguridad ? (
+                          <a
+                            key={'seguridad'}
+                            className={classNames(
+                              ' hover:bg-green-400 text-white',
+                              'px-3 py-2 rounded-md text-sm font-medium',
+                            )}
+                            onClick={handleClick}
+                          >
+                            Seguridad
+                          </a>
+                        ) : null}
                         <Menu2
                           id="basic-menu"
                           anchorEl={anchorEl}
@@ -238,7 +273,7 @@ export default function Layout({ children }: any) {
                       />
                     </div>
                     <div className="ml-3">
-                      <div className="text-base font-medium leading-none text-white">{user?.name}</div>
+                      <div className="text-base font-medium leading-none text-white">{user?.email}</div>
                       <div className="text-xs font-medium leading-none text-sand-300">{user?.email}</div>
                     </div>
                   </div>
