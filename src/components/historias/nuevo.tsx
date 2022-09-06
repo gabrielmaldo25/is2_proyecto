@@ -6,12 +6,9 @@ import {
   Button,
   Select,
   MenuItem,
-  Checkbox,
   OutlinedInput,
   ListItemText,
   SelectChangeEvent,
-  Chip,
-  Box,
 } from '@mui/material';
 import { UserStory } from 'src/interfaces/interfaces';
 import { isNilorEmpty } from 'src/helpers';
@@ -133,7 +130,7 @@ export default function NuevoUS({
   const updateUS = async (id: any, currentUS: UserStory) => {
     let payload = { ...currentUS };
 
-    await fetch('http://localhost:3000/api/roles/' + id, {
+    await fetch('http://localhost:3000/api/historias/' + id, {
       method: 'PUT',
       body: JSON.stringify(payload),
       headers: {
@@ -144,11 +141,11 @@ export default function NuevoUS({
 
   const handleDelete = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/roles/' + userStory.id_rol, {
+      const res = await fetch('http://localhost:3000/api/historias/' + userStory.id_us, {
         method: 'DELETE',
       });
       refetchUStories();
-      setOpenDelete(false);
+      setOpen(false);
     } catch (error) {
       console.log(error);
     }
@@ -172,8 +169,8 @@ export default function NuevoUS({
     e.preventDefault();
     setLoading(true);
     try {
-      if (userStory?.hasOwnProperty('id_rol')) {
-        updateUS(userStory.id_rol, currentUS);
+      if (userStory?.hasOwnProperty('id_us')) {
+        updateUS(userStory.id_us, currentUS);
       } else {
         createUS(currentUS);
       }
@@ -275,23 +272,21 @@ export default function NuevoUS({
             <Button
               className="normal-case hover:bg-green-600 group flex items-center rounded-md bg-green-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
               type="submit"
-              /*               disabled={isNilorEmpty(selectedPermisos)}
-               */
             >
               {userStory ? 'Actualizar' : 'Guardar'}
             </Button>
             {userStory && (
               <Button onClick={() => setOpenDelete(true)} className="normal-case" color="warning">
-                Eliminar UserStory
+                Eliminar Historia
               </Button>
             )}
           </DialogActions>
         </form>
       </Dialog>
       <Dialog open={openDelete} onClose={handleCloseDelete}>
-        <DialogTitle className="bg-gray-900 text-white">Eliminar Permiso</DialogTitle>
+        <DialogTitle className="bg-gray-900 text-white">Eliminar Historia</DialogTitle>
         <div className="bg-gray-900 text-white p-4">
-          <text>Estas seguro de que quieres eliminar este userStory?</text>
+          <text>Estas seguro de que quieres eliminar esta historia?</text>
         </div>
         <DialogActions className="bg-gray-900">
           <Button
