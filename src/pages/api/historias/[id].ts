@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { conn } from 'src/utils/database';
-
+import { isNilorEmpty } from 'src/helpers';
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const {
@@ -25,7 +25,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case 'PUT':
       try {
         const { nombre, descripcion, id_estado, id_proyecto, id_user, id_sprint } = body;
-        let values = [nombre, descripcion, id_estado, id_proyecto, id_user, id_sprint, id];
+        let values = [
+          nombre,
+          descripcion,
+          id_estado,
+          id_proyecto,
+          isNilorEmpty(id_user) ? null : id_user,
+          id_sprint,
+          id,
+        ];
 
         let query = `Update user_stories set nombre = $1, descripcion = $2, id_estado = $3, id_proyecto=$4, id_user = $5, id_sprint = $6
          where id_us = $7 RETURNING *`;

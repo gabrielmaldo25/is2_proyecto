@@ -214,6 +214,9 @@ export default function NuevoUS({
                 input={<OutlinedInput label="Tag" />}
                 MenuProps={MenuProps}
               >
+                <MenuItem value={''}>
+                  <ListItemText primary={'Ninguno'} />
+                </MenuItem>
                 {!isNilorEmpty(usuarios) &&
                   usuarios.map((user: any) => (
                     <MenuItem key={user.id_user} value={user.id_user}>
