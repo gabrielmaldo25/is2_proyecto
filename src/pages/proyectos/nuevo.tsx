@@ -12,8 +12,9 @@ import {
   SelectChangeEvent,
   Chip,
   Box,
+  TextareaAutosize,
 } from '@mui/material';
-import { Permiso } from 'src/interfaces/interfaces';
+import { Proyecto } from 'src/interfaces/interfaces';
 import { isNilorEmpty } from 'src/helpers';
 import Alert from '@mui/material/Alert';
 import fetchJson, { FetchError } from 'lib/fetchJson';
@@ -41,63 +42,69 @@ const MenuProps = {
 type ChangeInputHandler = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
 const inititalState = {
+  nombre: '',
   descripcion: '',
-  forms: [],
+  participantes: [],
 };
 
 export default function Nuevo({
   open,
   setOpen,
-  setPermission,
-  permission = null,
-  refetchPermissions,
+  setProject,
+  project = null,
+  refetchProjects,
 }: {
   open: any;
   setOpen: any;
-  setPermission: any;
-  permission?: any;
-  refetchPermissions: any;
+  setProject: any;
+  project?: any;
+  refetchProjects: any;
 }) {
-  const [permiso, setPermiso] = useState<Permiso>(inititalState);
+  const [proyecto, setProyecto] = useState<Proyecto>(inititalState);
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [selectedForms, setSelectedForms] = React.useState<any[]>([]);
-  const [formularios, setFormularios] = useState([]);
+  const [selectedParticipantes, setSelectedParticipantes] = React.useState<any[]>([]);
+  const [usuarios, setUsuarios] = useState<any>([]);
   const [errorMessage, setErrorMessage] = useState<any>(null);
 
   useEffect(() => {
-    if (permission) {
-      setSelectedForms(permission.formularios.map((i: any) => i.id_form));
+    console.log('PROYECTO: ', project);
+    if (project && !isNilorEmpty(project.participantes)) {
+      setSelectedParticipantes(project.participantes.map((i: any) => i.id_user));
     }
-  }, [permission]);
+  }, [project]);
   useEffect(() => {
     setLoading(true);
-    fetch('/api/extra/formularios')
+    fetch('/api/usuarios')
       .then((res) => res.json())
       .then((data) => {
-        setFormularios(data);
+        setUsuarios(data);
         setLoading(false);
       });
   }, []);
 
+  useEffect(() => {
+    console.log('USUARIOS: ', usuarios);
+  }, [usuarios]);
+
   const handleSelectChange = (event: SelectChangeEvent<any>) => {
     const { value } = event.target;
 
-    setSelectedForms(value);
+    setSelectedParticipantes(value);
   };
 
   useEffect(() => {
-    permission !== null ? setPermiso({ ...permission }) : null;
-  }, [permission]);
+    project !== null ? setProyecto({ ...project }) : null;
+  }, [project]);
 
   const handleClose = () => {
-    permission ? setPermission(null) : null;
+    project ? setProject(null) : null;
     setOpen(false);
   };
 
-  const createPermiso = async (permiso: Permiso) => {
-    let payload = { descripcion: permiso.descripcion, forms: selectedForms };
-    await fetch('http://localhost:3000/api/permisos', {
+  const createProyecto = async (proyecto: Proyecto) => {
+    let payload = { ...proyecto, participantes: selectedParticipantes };
+    await fetch('http://localhost:3000/api/proyectos', {
       method: 'POST',
       body: JSON.stringify(payload),
       headers: {
@@ -105,10 +112,10 @@ export default function Nuevo({
       },
     });
   };
-  const updatePermiso = async (id: any, permiso: Permiso) => {
-    let payload = { descripcion: permiso.descripcion, forms: selectedForms };
+  const updateProyecto = async (id: any, proyecto: Proyecto) => {
+    let payload = { ...proyecto, participantes: selectedParticipantes };
 
-    await fetch('http://localhost:3000/api/permisos/' + id, {
+    await fetch('http://localhost:3000/api/proyectos/' + id, {
       method: 'PUT',
       body: JSON.stringify(payload),
       headers: {
@@ -119,11 +126,11 @@ export default function Nuevo({
 
   const handleDelete = async () => {
     try {
-      const res = await fetchJson('api/permisos/' + permission.id_permiso, {
+      const res = await fetchJson('api/proyectos/' + project.id_proyecto, {
         method: 'DELETE',
       });
-      refetchPermissions();
-      setOpenDelete(false);
+      refetchProjects();
+      setOpen(false);
     } catch (error) {
       handleCloseDelete();
       if (error instanceof FetchError) {
@@ -138,23 +145,23 @@ export default function Nuevo({
     setOpenDelete(false);
   };
 
-  const handleChange = ({ target: { name, value } }: ChangeInputHandler) => setPermiso({ ...permiso, [name]: value });
+  const handleChange = ({ target: { name, value } }: ChangeInputHandler) => setProyecto({ ...proyecto, [name]: value });
 
   function afterSaved() {
-    setPermiso(inititalState);
-    setPermission(null);
+    setProyecto(inititalState);
+    setProject(null);
     setOpen(false);
-    refetchPermissions();
+    refetchProjects();
   }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     try {
-      if (permission?.hasOwnProperty('id_permiso')) {
-        updatePermiso(permission.id_permiso, permiso);
+      if (project?.hasOwnProperty('id_proyecto')) {
+        updateProyecto(project.id_proyecto, proyecto);
       } else {
-        createPermiso(permiso);
+        createProyecto(proyecto);
       }
       afterSaved();
     } catch (error) {
@@ -169,44 +176,46 @@ export default function Nuevo({
     <div>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle className="bg-gray-900 text-white">
-          {permission ? 'Editar Permiso' : ' Agregar Permiso'}
+          {project ? 'Editar Proyecto' : ' Agregar Proyecto'}
         </DialogTitle>
         <form onSubmit={handleSubmit}>
           <div className="bg-sand-300 space-y-4 w-full p-8 pt-4 ">
             <Input
               type="text"
+              placeholder="Nombre"
+              name="nombre"
+              onChange={handleChange}
+              value={proyecto.nombre}
+              required
+            />
+            <textarea
+              className="flex max-h-20 h-20 w-full resize-none p-2 "
               placeholder="Descripcion"
               name="descripcion"
               onChange={handleChange}
-              value={permiso.descripcion}
-              required
+              value={proyecto.descripcion}
             />
             <div className="flex flex-col">
-              <text className="text-lg">Selecciona la/s pantalla/s sobre la que el permiso puede operar</text>
+              <text className="text-lg">Puedes agregar participantes al proyecto</text>
               <Select
                 multiple
-                value={selectedForms}
+                value={selectedParticipantes}
                 onChange={handleSelectChange}
                 input={<OutlinedInput label="Tag" />}
                 renderValue={(selected) => (
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                     {selected.map((id) => (
-                      <Chip
-                        key={id}
-                        label={
-                          !isNilorEmpty(formularios) ? formularios.find((e) => e.id_form === id).nombre_form : null
-                        }
-                      />
+                      <Chip key={id} label={usuarios.find((e: any) => e.id_user === id).name} />
                     ))}
                   </Box>
                 )}
                 MenuProps={MenuProps}
               >
-                {!isNilorEmpty(formularios) &&
-                  formularios.map((form: any) => (
-                    <MenuItem key={form.id_form} value={form.id_form}>
-                      <Checkbox checked={selectedForms.includes(form.id_form)} />
-                      <ListItemText primary={form.nombre_form} />
+                {!isNilorEmpty(usuarios) &&
+                  usuarios.map((user: any) => (
+                    <MenuItem key={user.id_user} value={user.id_user}>
+                      <Checkbox checked={selectedParticipantes.includes(user.id_user)} />
+                      <ListItemText primary={user.name} secondary={user.email} />
                     </MenuItem>
                   ))}
               </Select>
@@ -214,7 +223,7 @@ export default function Nuevo({
             {errorMessage && (
               <Alert variant="outlined" severity="error">
                 {errorMessage + `\n`}
-                Error al intentar borrar permiso. Verifique que no este en uso antes de eliminarlo.
+                Error al intentar borrar proyecto.
               </Alert>
             )}
           </div>
@@ -228,13 +237,13 @@ export default function Nuevo({
             <Button
               className="normal-case hover:bg-green-600 group flex items-center rounded-md bg-green-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
               type="submit"
-              disabled={isNilorEmpty(formularios)}
+              disabled={isNilorEmpty(usuarios)}
             >
-              {permission ? 'Actualizar' : 'Guardar'}
+              {project ? 'Actualizar' : 'Guardar'}
             </Button>
-            {permission && (
+            {project && (
               <Button onClick={() => setOpenDelete(true)} className="normal-case" color="warning">
-                Eliminar Permiso
+                Eliminar Proyecto
               </Button>
             )}
           </DialogActions>
@@ -242,9 +251,9 @@ export default function Nuevo({
       </Dialog>
 
       <Dialog open={openDelete} onClose={handleCloseDelete}>
-        <DialogTitle className="bg-gray-900 text-white">Eliminar Permiso</DialogTitle>
+        <DialogTitle className="bg-gray-900 text-white">Eliminar Proyecto</DialogTitle>
         <div className="bg-gray-900 text-white p-4">
-          <text>Estas seguro de que quieres eliminar este permiso?</text>
+          <text>Estas seguro de que quieres eliminar este proyecto?</text>
         </div>
         <DialogActions className="bg-gray-900">
           <Button
