@@ -39,7 +39,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         await conn.query(query, values);
 
         query = 'INSERT INTO usuario_rol (id_user, id_rol, valido_desde, valido_hasta) VALUES ($1, $2, $3, $4)';
-        values = [id_user, new_rol.id, rol[0].valido_desde? rol[0].valido_desde : new Date().toLocaleDateString(), new_rol.valido_hasta];
+        values = [id_user, new_rol.id? new_rol.id : rol[0].id_rol , 
+        rol[0].valido_desde? rol[0].valido_desde : new Date().toLocaleDateString(), 
+        new_rol.valido_hasta? new_rol.valido_hasta : rol[0].valido_hasta];
         console.log(values + "values ")
         response = await conn.query(query, values);
 
