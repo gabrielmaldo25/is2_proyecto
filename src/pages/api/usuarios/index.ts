@@ -16,7 +16,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
             left join roles r on r.id_rol = ur.id_rol
         group by u.id_user
             order by 1 asc`;
-        //const query ="select * from usuarios"
         const response = await conn.query(query);
         return res.json(response.rows);
       } catch (error: any) {
@@ -25,7 +24,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     case 'POST':
       try {
         const { name, email, password, rol } = body;
-        // console.log('ROL :', rol);
         let query = 'INSERT INTO usuarios(name, email, password) VALUES ($1, $2, $3) RETURNING *';
         let values = [name, email, password];
         let response = await conn.query(query, values);

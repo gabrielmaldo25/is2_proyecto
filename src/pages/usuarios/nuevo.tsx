@@ -126,7 +126,6 @@ export default function Nuevo({
 
   const handleSelectChange = (event: SelectChangeEvent<any>) => {
     const { value } = event.target;
-    console.log('VALUE: ' + value);
 
     setSelectedRol({ ...selectedRol, id: value });
   };
@@ -141,9 +140,7 @@ export default function Nuevo({
     refetchUsers();
     setOpen(false);
   }
-  useEffect(() => {
-    console.log('IS NULL; ', isNilorEmpty(selectedRol));
-  }, [selectedRol]);
+  useEffect(() => {}, [selectedRol]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -12,7 +12,6 @@ export type User = {
   proyectos: boolean;
   usuarios: boolean;
   seguridad: boolean;
-  // screens: Array<object>;
 };
 
 async function userRoute(req: NextApiRequest, res: NextApiResponse<User>) {
@@ -31,8 +30,10 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse<User>) {
       email: "",
       id_user: null,
       password: "",
-      id_rol: null,
-      screens: [],
+      id_rol: null, 
+      proyectos: false,
+      usuarios: false,
+      seguridad: false,
     });
   }
 }

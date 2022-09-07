@@ -29,7 +29,6 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
         const value = [response.rows[0].id_rol]
         screens = await conn.query(query_screens, value);
 
-        // console.log(screens.rows[0]);
         const user = { isLoggedIn: true, proyectos: screens.rows.find(({ nombre_form }) => nombre_form === 'Proyectos') ? true : false,
         usuarios: screens.rows.find(({ nombre_form }) => nombre_form === 'Usuarios') ? true : false,
         seguridad: screens.rows.find(({ nombre_form }) => nombre_form === 'Seguridad') ? true : false,

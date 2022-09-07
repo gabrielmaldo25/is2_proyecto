@@ -14,13 +14,11 @@ import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import List from '@mui/material/List';
-import { screens } from '../pages/api/login';
 
 export default function Layout({ children }: any) {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
-  const [nav, setNav] = useState([]);
 
   const [openMob, setOpenMob] = React.useState(true);
 
@@ -80,20 +78,6 @@ export default function Layout({ children }: any) {
                   <div className="flex items-center">
                     <div className="hidden md:block">
                       <div className=" flex items-baseline space-x-4">
-                        {/* {navigation.slice(0, 2).map((item) => (
-                          <a
-                            key={item.name}
-                            href={item.href}
-                            className={classNames(
-                              item.href.toLowerCase() == router.pathname
-                                ? 'bg-green-600 text-white'
-                                : ' hover:bg-green-400 text-white',
-                              'px-3 py-2 rounded-md text-sm font-medium',
-                            )}
-                          >
-                            {item.name}
-                          </a>
-                        ))} */}
                         {user?.proyectos ? (
                           <a
                             key={navigation[0].name}
@@ -224,44 +208,61 @@ export default function Layout({ children }: any) {
 
               <Disclosure.Panel className="md:hidden">
                 <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                  {navigation.slice(0, 2).map((item) => (
+                  {user?.proyectos ? (
                     <Disclosure.Button
-                      key={item.name}
+                      key={navigation[0].name}
                       as="a"
-                      href={item.href}
+                      href={navigation[0].href}
                       className={classNames(
-                        item.href.toLowerCase() == router.pathname
+                        navigation[0].href.toLowerCase() == router.pathname
                           ? 'bg-green-800 text-white'
                           : 'hover:bg-green-600 text-white',
                         'block px-3 py-2 rounded-md text-base font-medium',
                       )}
                     >
-                      {item.name}
+                      {navigation[0].name}
                     </Disclosure.Button>
-                  ))}
-                  <List>
-                    <ListItemButton onClick={() => handleClickMob()}>
-                      <ListItemText className={classNames('bg-green-800 text-white')} primary="Seguridad" />
-                      {openMob ? <ExpandLess /> : <ExpandMore />}
-                    </ListItemButton>
-                    <Collapse in={openMob} timeout="auto" unmountOnExit>
-                      <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4 }}>
-                          <ListItemText
-                            onClick={() => {
-                              router.push('/permisos');
-                              handleClose();
-                            }}
-                            className={classNames('bg-green-800 text-white')}
-                            primary="Permisos"
-                          />
-                        </ListItemButton>
-                        <ListItemButton sx={{ pl: 4 }}>
-                          <ListItemText className={classNames('bg-green-800 text-white')} primary="Roles" />
-                        </ListItemButton>
-                      </List>
-                    </Collapse>
-                  </List>
+                  ) : null}
+                  {user?.usuarios ? (
+                    <Disclosure.Button
+                      key={navigation[1].name}
+                      as="a"
+                      href={navigation[1].href}
+                      className={classNames(
+                        navigation[1].href.toLowerCase() == router.pathname
+                          ? 'bg-green-800 text-white'
+                          : 'hover:bg-green-600 text-white',
+                        'block px-3 py-2 rounded-md text-base font-medium',
+                      )}
+                    >
+                      {navigation[1].name}
+                    </Disclosure.Button>
+                  ) : null}
+                  {user?.seguridad ? (
+                    <List>
+                      <ListItemButton onClick={() => handleClickMob()}>
+                        <ListItemText className={classNames('bg-green-800 text-white')} primary="Seguridad" />
+                        {openMob ? <ExpandLess /> : <ExpandMore />}
+                      </ListItemButton>
+                      <Collapse in={openMob} timeout="auto" unmountOnExit>
+                        <List component="div" disablePadding>
+                          <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemText
+                              onClick={() => {
+                                router.push('/permisos');
+                                handleClose();
+                              }}
+                              className={classNames('bg-green-800 text-white')}
+                              primary="Permisos"
+                            />
+                          </ListItemButton>
+                          <ListItemButton sx={{ pl: 4 }}>
+                            <ListItemText className={classNames('bg-green-800 text-white')} primary="Roles" />
+                          </ListItemButton>
+                        </List>
+                      </Collapse>
+                    </List>
+                  ) : null}
                 </div>
                 <div className="pt-4 pb-3 border-t border-green-600">
                   <div className="flex items-center px-5">
@@ -273,7 +274,7 @@ export default function Layout({ children }: any) {
                       />
                     </div>
                     <div className="ml-3">
-                      <div className="text-base font-medium leading-none text-white">{user?.email}</div>
+                      <div className="text-base font-medium leading-none text-white">{user?.name}</div>
                       <div className="text-xs font-medium leading-none text-sand-300">{user?.email}</div>
                     </div>
                   </div>

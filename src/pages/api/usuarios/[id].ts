@@ -26,7 +26,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case "PUT":
       try {
         const { name, email, password, rol, id_user, new_rol } = body;
-        console.log(JSON.stringify(rol) + "rooool");
         let query = 'UPDATE usuarios SET name = $1, email = $2';
         if (!isNilorEmpty(password)) query += ", password = $4 ";
         query += "WHERE id_user = $3 RETURNING *";
@@ -42,7 +41,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         values = [id_user, new_rol.id? new_rol.id : rol[0].id_rol , 
         rol[0].valido_desde? rol[0].valido_desde : new Date().toLocaleDateString(), 
         new_rol.valido_hasta? new_rol.valido_hasta : rol[0].valido_hasta];
-        console.log(values + "values ")
         response = await conn.query(query, values);
 
         return res.json(response.rows[0]);
