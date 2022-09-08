@@ -53,7 +53,7 @@ export default function Layout({ children }: any) {
   };
 
   const navigation = [
-    { name: 'Proyectos', href: '/', current: true },
+    { name: 'Proyectos', href: '/proyectos', current: true },
     { name: 'Usuarios', href: '/usuarios', current: false },
     { name: 'Seguridad', href: '#', current: false },
   ];
@@ -69,7 +69,7 @@ export default function Layout({ children }: any) {
 
   return (
     <>
-      <div className="min-h-full">
+      <div className="min-h-screen flex flex-col">
         <Disclosure as="nav" className="bg-green-800">
           {({ open }) => (
             <>
@@ -205,7 +205,6 @@ export default function Layout({ children }: any) {
                   </div>
                 </div>
               </div>
-
               <Disclosure.Panel className="md:hidden">
                 <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                   {user?.proyectos ? (
@@ -289,6 +288,8 @@ export default function Layout({ children }: any) {
                       >
                         {item.name}
                       </Disclosure.Button>
+                      //   ))}
+                      // </div>
                     ))}
                   </div>
                 </div>
@@ -296,12 +297,9 @@ export default function Layout({ children }: any) {
             </>
           )}
         </Disclosure>
-
-        <main>
-          <div className="bg-black h-screen">
-            <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 ">{children}</div>
-          </div>
-        </main>
+        <div className="relative flex flex-grow bg-black">
+          <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 bg-black flex-1">{children}</main>
+        </div>
       </div>
     </>
   );

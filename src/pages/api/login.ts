@@ -15,10 +15,10 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
     case "POST":
       try {
         const { email, password } = await req.body;
-        let query = "select u.*, ur.id_rol from usuarios u"
-        + " join usuario_rol ur on ur.id_user = u.id_user"
-        + " join roles r on r.id_rol = ur.id_rol"
-        + " where u.email = $1";
+        let query = `select u.*, ur.id_rol from usuarios u
+        left join usuario_rol ur on ur.id_user = u.id_user
+       left join roles r on r.id_rol = ur.id_rol
+         where u.email = $1`;
         const values = [email];
         const response = await conn.query(query, values);
 

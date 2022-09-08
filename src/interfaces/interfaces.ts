@@ -24,3 +24,20 @@ export interface Rol {
   nombre: string;
   permisos?: any;
 }
+
+export interface Proyecto {
+  id_proyecto?: any;
+  nombre: string;
+  descripcion?: any;
+  participantes?: any;
+}
+
+export interface UserStory {
+  id_us?: any;
+  id_sprint?: any;
+  nombre: string;
+  id_estado: any;
+  id_user?: any;
+  id_proyecto: any;
+  descripcion?: any;
+}

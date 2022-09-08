@@ -4,19 +4,30 @@ import { conn } from 'src/utils/database';
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async function (req: NextApiRequest, res: NextApiResponse) {
-  const { method, body } = req;
+  const { method, body, query } = req;
+  const { id_proyecto } = query;
   switch (method) {
     case 'GET':
       try {
-        const query = `select u.*,
-        json_agg(json_build_object('id_rol',r.id_rol,'nombre',r.nombre,
-                   'valido_desde',ur.valido_desde,
-                   'valido_hasta',ur.valido_hasta )) as Rol
-            from usuarios u left join usuario_rol ur on u.id_user = ur.id_user
-            left join roles r on r.id_rol = ur.id_rol
-        group by u.id_user
-            order by 1 asc`;
-        const response = await conn.query(query);
+        let query = '';
+        let values = [];
+        if (id_proyecto) {
+          values.push(id_proyecto);
+          query = `select u.* from usuarios u
+          join usuarios_proyectos up on up.id_user = u.id_user
+          where id_proyecto = $1`;
+        } else {
+          query = `select u.*,
+          json_agg(json_build_object('id_rol',r.id_rol,'nombre',r.nombre,
+                     'valido_desde',ur.valido_desde,
+                     'valido_hasta',ur.valido_hasta )) as Rol
+              from usuarios u left join usuario_rol ur on u.id_user = ur.id_user
+              left join roles r on r.id_rol = ur.id_rol
+          group by u.id_user
+              order by 1 asc`;
+        }
+        let response = await conn.query(query, values);
+
         return res.json(response.rows);
       } catch (error: any) {
         return res.status(400).json({ message: error.message });
