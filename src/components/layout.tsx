@@ -297,7 +297,7 @@ export default function Layout({ children }: any) {
             </>
           )}
         </Disclosure>
-        <div className="relative flex flex-grow bg-black">
+        <div className="bg-black h-screen">
           <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 bg-black flex-1">{children}</main>
         </div>
       </div>
