@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
-import Layout from "src/components/layout";
-import { PencilIcon } from "@heroicons/react/outline";
+import { useState, useEffect } from 'react';
+import Layout from 'src/components/layout';
+import { PencilIcon } from '@heroicons/react/outline';
 /*Parte de la tabla */
-import * as React from "react";
-import { useTheme } from "@mui/material/styles";
-import FirstPageIcon from "@mui/icons-material/FirstPage";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import LastPageIcon from "@mui/icons-material/LastPage";
-import Nuevo from "./nuevo";
+import * as React from 'react';
+import { useTheme } from '@mui/material/styles';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import LastPageIcon from '@mui/icons-material/LastPage';
+import Nuevo from './nuevo';
 import {
   Box,
   Table,
@@ -21,86 +21,59 @@ import {
   Paper,
   IconButton,
   TableHead,
-} from "@mui/material";
-import { Usuario } from "src/interfaces/interfaces";
-import { GetServerSideProps } from "next";
-import { useRouter } from "next/router";
+} from '@mui/material';
+import { Usuario } from 'src/interfaces/interfaces';
+import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 /* *** */
 
 interface TablePaginationActionsProps {
   count: number;
   page: number;
   rowsPerPage: number;
-  onPageChange: (
-    event: React.MouseEvent<HTMLButtonElement>,
-    newPage: number
-  ) => void;
+  onPageChange: (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => void;
 }
 function TablePaginationActions(props: TablePaginationActionsProps) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
 
-  const handleFirstPageButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     onPageChange(event, 0);
   };
 
-  const handleBackButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     onPageChange(event, page - 1);
   };
 
-  const handleNextButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     onPageChange(event, page + 1);
   };
 
-  const handleLastPageButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   };
 
   return (
     <Box sx={{ flexShrink: 0, ml: 2.5 }}>
-      <IconButton
-        onClick={handleFirstPageButtonClick}
-        disabled={page === 0}
-        aria-label="first page"
-      >
-        {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
+      <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="first page">
+        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
       </IconButton>
-      <IconButton
-        onClick={handleBackButtonClick}
-        disabled={page === 0}
-        aria-label="previous page"
-      >
-        {theme.direction === "rtl" ? (
-          <KeyboardArrowRight />
-        ) : (
-          <KeyboardArrowLeft />
-        )}
+      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+        {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
       </IconButton>
       <IconButton
         onClick={handleNextButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="next page"
       >
-        {theme.direction === "rtl" ? (
-          <KeyboardArrowLeft />
-        ) : (
-          <KeyboardArrowRight />
-        )}
+        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
       </IconButton>
       <IconButton
         onClick={handleLastPageButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="last page"
       >
-        {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
+        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
       </IconButton>
     </Box>
   );
@@ -111,25 +84,21 @@ interface Props {
 }
 export default function indexUsers({ usuarios }: Props) {
   const router = useRouter();
-
+  useEffect(() => {
+    console.log('USUARIOS: ', usuarios);
+  }, [usuarios]);
   /* Parte de la tabla */
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [usuario, setUsuario] = useState<any>(null);
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - usuarios.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - usuarios.length) : 0;
 
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -152,13 +121,7 @@ export default function indexUsers({ usuarios }: Props) {
                   className="hover:bg-green-600 group flex items-center rounded-md bg-green-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
                   onClick={() => setOpen(true)}
                 >
-                  <svg
-                    width="20"
-                    height="20"
-                    fill="currentColor"
-                    className="mr-2"
-                    aria-hidden="true"
-                  >
+                  <svg width="20" height="20" fill="currentColor" className="mr-2" aria-hidden="true">
                     <path d="M10 5a1 1 0 0 1 1 1v3h3a1 1 0 1 1 0 2h-3v3a1 1 0 1 1-2 0v-3H6a1 1 0 1 1 0-2h3V6a1 1 0 0 1 1-1Z" />
                   </svg>
                   Nuevo
@@ -188,10 +151,7 @@ export default function indexUsers({ usuarios }: Props) {
             </header>
 
             <TableContainer component={Paper}>
-              <Table
-                aria-label="custom pagination table"
-                className="p-4 sm:px-8 sm:py-6 lg:p-4 xl:px-8 xl:py-6"
-              >
+              <Table aria-label="custom pagination table" className="p-4 sm:px-8 sm:py-6 lg:p-4 xl:px-8 xl:py-6">
                 <TableHead className="bg-green-800">
                   <TableRow>
                     <TableCell className="text-white">id</TableCell>
@@ -204,10 +164,7 @@ export default function indexUsers({ usuarios }: Props) {
                 </TableHead>
                 <TableBody>
                   {(rowsPerPage > 0
-                    ? usuarios.slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
+                    ? usuarios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     : usuarios
                   ).map((row) => (
                     <TableRow
@@ -218,31 +175,20 @@ export default function indexUsers({ usuarios }: Props) {
                         setOpen(true);
                       }}
                     >
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        className="text-sand-300 hover:text-gray-900"
-                      >
+                      <TableCell component="th" scope="row" className="text-sand-300 hover:text-gray-900">
                         {row.id_user}
                       </TableCell>
+                      <TableCell className="text-sand-300 hover:text-gray-900">{row.name}</TableCell>
+                      <TableCell className="text-sand-300 hover:text-gray-900">{row.email}</TableCell>
+
                       <TableCell className="text-sand-300 hover:text-gray-900">
-                        {row.name}
+                        {row.rol[0].nombre ? row.rol[0].nombre : null}
                       </TableCell>
                       <TableCell className="text-sand-300 hover:text-gray-900">
-                        {row.email}
+                        {row.rol[0].valido_desde ? row.rol[0].valido_desde : null}
                       </TableCell>
                       <TableCell className="text-sand-300 hover:text-gray-900">
-                        {row.descripcion_rol ? row.descripcion_rol : null}
-                      </TableCell>
-                      <TableCell className="text-sand-300 hover:text-gray-900">
-                        {row.rol_desde
-                          ? row.rol_desde.toLocaleDateString()
-                          : null}
-                      </TableCell>
-                      <TableCell className="text-sand-300 hover:text-gray-900">
-                        {row.rol_hasta
-                          ? row.rol_hasta.toLocaleDateString()
-                          : null}
+                        {row.rol[0].valido_hasta ? row.rol[0].valido_hasta : null}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -255,19 +201,14 @@ export default function indexUsers({ usuarios }: Props) {
                 <TableFooter className="bg-green-800">
                   <TableRow>
                     <TablePagination
-                      rowsPerPageOptions={[
-                        5,
-                        10,
-                        25,
-                        { label: "All", value: -1 },
-                      ]}
+                      rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
                       colSpan={6}
                       count={usuarios.length}
                       rowsPerPage={rowsPerPage}
                       page={page}
                       SelectProps={{
                         inputProps: {
-                          "aria-label": "rows per page",
+                          'aria-label': 'rows per page',
                         },
                         native: true,
                       }}
@@ -280,13 +221,7 @@ export default function indexUsers({ usuarios }: Props) {
               </Table>
             </TableContainer>
             {open && (
-              <Nuevo
-                open={open}
-                setOpen={setOpen}
-                user={usuario}
-                setUser={setUsuario}
-                refetchUsers={refreshData}
-              />
+              <Nuevo open={open} setOpen={setOpen} user={usuario} setUser={setUsuario} refetchUsers={refreshData} />
             )}
           </section>
         </div>
@@ -295,9 +230,8 @@ export default function indexUsers({ usuarios }: Props) {
   );
 }
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const res = await fetch("http://localhost:3000/api/usuarios");
+  const res = await fetch('http://localhost:3000/api/usuarios');
   const usuarios = await res.json();
-
   return {
     props: { usuarios },
   };

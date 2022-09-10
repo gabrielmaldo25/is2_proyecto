@@ -8,16 +8,31 @@ import { authServiceFactory } from "../../../services/authService";
 import * as bcrypt from "bcryptjs";
 
 const authService = authServiceFactory();
+export let screens: { rows: { nombre_form: string; }[]; } 
 
 async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
   switch (req.method) {
     case "POST":
       try {
         const { email, password } = await req.body;
-        const query = "SELECT * FROM usuarios where email = $1";
+        let query = `select u.*, ur.id_rol from usuarios u
+        left join usuario_rol ur on ur.id_user = u.id_user
+       left join roles r on r.id_rol = ur.id_rol
+         where u.email = $1`;
         const values = [email];
         const response = await conn.query(query, values);
-        const user = { isLoggedIn: true, ...response.rows[0] } as User;
+
+        const query_screens = "select distinct(f.nombre_form) from roles_permisos rp"
+        + " join permiso_formulario pf on pf.id_permiso = rp.id_permiso"
+        + " join formularios f on f.id_form = pf.id_form"
+        + " where rp.id_rol = $1";
+        const value = [response.rows[0].id_rol]
+        screens = await conn.query(query_screens, value);
+
+        const user = { isLoggedIn: true, proyectos: screens.rows.find(({ nombre_form }) => nombre_form === 'Proyectos') ? true : false,
+        usuarios: screens.rows.find(({ nombre_form }) => nombre_form === 'Usuarios') ? true : false,
+        seguridad: screens.rows.find(({ nombre_form }) => nombre_form === 'Seguridad') ? true : false,
+         ...response.rows[0] } as User;
 
         if (
           (await authService.validate(password, response.rows[0].password)) ===

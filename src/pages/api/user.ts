@@ -8,6 +8,10 @@ export type User = {
   email: string;
   id_user: any;
   password: string;
+  id_rol: any;
+  proyectos: boolean;
+  usuarios: boolean;
+  seguridad: boolean;
 };
 
 async function userRoute(req: NextApiRequest, res: NextApiResponse<User>) {
@@ -26,6 +30,10 @@ async function userRoute(req: NextApiRequest, res: NextApiResponse<User>) {
       email: "",
       id_user: null,
       password: "",
+      id_rol: null, 
+      proyectos: false,
+      usuarios: false,
+      seguridad: false,
     });
   }
 }

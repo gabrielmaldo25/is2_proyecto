@@ -46,9 +46,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       try {
         const values = [id];
         let text = 'DELETE FROM roles_permisos WHERE id_rol = $1';
-        await conn.query(text, values);
-        text = 'delete from roles where id_rol = $1';
         let result = await conn.query(text, values);
+        if (result.rowCount > 0) return res.status(404).json({ message: 'No se puede borrar este permiso' });
+
+
+        text = 'delete from roles where id_rol = $1';
+        result = await conn.query(text, values);
 
         if (result.rowCount === 0) return res.status(404).json({ message: 'Rol no encontrado' });
 

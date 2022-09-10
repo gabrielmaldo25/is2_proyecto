@@ -62,7 +62,7 @@ export default function Nuevo({
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedForms, setSelectedForms] = React.useState<any[]>([]);
-  const [formularios, setFormularios] = useState([]);
+  const [formularios, setFormularios] = useState<any>([]);
   const [errorMessage, setErrorMessage] = useState<any>(null);
 
   useEffect(() => {
@@ -194,7 +194,7 @@ export default function Nuevo({
                       <Chip
                         key={id}
                         label={
-                          !isNilorEmpty(formularios) ? formularios.find((e) => e.id_form === id).nombre_form : null
+                          !isNilorEmpty(formularios) ? formularios.find((e: any) => e.id_form === id).nombre_form : null
                         }
                       />
                     ))}
@@ -213,8 +213,8 @@ export default function Nuevo({
             </div>
             {errorMessage && (
               <Alert variant="outlined" severity="error">
-                {errorMessage + `\n`}
-                Error al intentar borrar permiso. Verifique que no este en uso antes de eliminarlo.
+                {errorMessage + `.\n`}
+                Verifique que no este en uso antes de eliminarlo.
               </Alert>
             )}
           </div>

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react';
+import React, { ChangeEvent, FormEvent, useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogActions,
@@ -82,6 +82,7 @@ export default function Nuevo({
       setSelectedPermisos(rol.permisos.map((i: any) => i.id_permiso));
     }
   }, [rol]);
+
   useEffect(() => {
     setLoading(true);
     fetch('/api/permisos')

@@ -10,9 +10,7 @@ export interface Usuario {
   name: string;
   email: string;
   password: string;
-  descripcion_rol?: string;
-  rol_desde?: Date;
-  rol_hasta?: Date;
+  rol?: any;
 }
 
 export interface Permiso {
