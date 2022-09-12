@@ -41,3 +41,12 @@ export interface UserStory {
   id_proyecto: any;
   descripcion?: any;
 }
+
+export interface Sprint {
+  id_sprint?: any;
+  nombre: any;
+  fecha_inicio: any;
+  fecha_fin: any;
+  id_estado: any;
+  id_backlog: any;
+}

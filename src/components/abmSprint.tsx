@@ -10,7 +10,7 @@ import {
   ListItemText,
   SelectChangeEvent,
 } from '@mui/material';
-import { UserStory } from 'src/interfaces/interfaces';
+import { Sprint } from 'src/interfaces/interfaces';
 import { isNilorEmpty } from 'src/helpers';
 import Alert from '@mui/material/Alert';
 
@@ -49,59 +49,36 @@ const names = [
 
 type ChangeInputHandler = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
-export default function NuevoUS({
+export default function ABMSprint({
   open,
   setOpen,
-  setUserStory,
-  userStory = null,
-  refetchUStories,
-  id_proyecto,
+  setSprint,
+  sprint = null,
+  refetchSprints,
+  id_backlog,
 }: {
   open: any;
   setOpen: any;
-  setUserStory: any;
-  userStory?: any;
-  refetchUStories: any;
-  id_proyecto: any;
+  setSprint: any;
+  sprint?: any;
+  refetchSprints: any;
+  id_backlog: any;
 }) {
   const inititalState = {
-    id_sprint: null,
     nombre: '',
-    descripcion: '',
-    id_estado: '',
-    id_user: null,
-    id_proyecto: id_proyecto,
+    fecha_inicio: '',
+    fecha_fin: '',
+    id_estado: null,
+    id_backlog: id_backlog,
   };
-  const [currentUS, setCurrentUS] = useState<UserStory>(inititalState);
+  const [currentSprint, setCurrentSprint] = useState<Sprint>(inititalState);
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [selectedUsuario, setSelectedUsuario] = React.useState<any>();
-  const [usuarios, setUsuarios] = useState([]);
   const [estados, setEstados] = useState<any>();
   const [errorMessage, setErrorMessage] = useState<any>(null);
-  const [sprints, setSprints] = useState([]);
-  const [selectedSprint, setSelectedSprint] = React.useState<any>();
 
   useEffect(() => {
-    if (userStory && userStory.id_user) {
-      setSelectedUsuario(userStory.id_user);
-    }
-    if (userStory && userStory.id_sprint) {
-      setSelectedSprint(userStory.id_sprint);
-    }
-  }, [userStory]);
-  useEffect(() => {
     setLoading(true);
-    fetch(`/api/usuarios?id_proyecto=${id_proyecto}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setUsuarios(data);
-      });
-    fetch(`/api/sprints?id_proyecto=${id_proyecto}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setSprints(data);
-      });
     fetch('/api/extra/estados')
       .then((res) => res.json())
       .then((data) => {
@@ -111,25 +88,22 @@ export default function NuevoUS({
   }, []);
 
   useEffect(() => {
-    if (isNilorEmpty(userStory) && !isNilorEmpty(estados))
-      setCurrentUS({ ...currentUS, id_estado: estados[0].id_estado });
+    if (isNilorEmpty(sprint) && !isNilorEmpty(estados))
+      setCurrentSprint({ ...currentSprint, id_estado: estados[0].id_estado });
   }, [estados]);
 
-  const handleSelectChange = (event: SelectChangeEvent<any>) => {
-    const { value } = event.target;
-    setSelectedUsuario(value);
-  };
-
   useEffect(() => {
-    userStory !== null ? setCurrentUS({ ...userStory }) : null;
-  }, [userStory]);
+    sprint !== null ? setCurrentSprint({ ...sprint }) : null;
+  }, [sprint]);
+
   const handleClose = () => {
-    userStory ? setUserStory(null) : null;
+    sprint ? setSprint(null) : null;
     setOpen(false);
   };
-  const createUS = async (currentUS: UserStory) => {
-    let payload = { ...currentUS };
-    await fetch('http://localhost:3000/api/historias', {
+
+  const createSprint = async (currentSprint: Sprint) => {
+    let payload = { ...currentSprint };
+    await fetch('http://localhost:3000/api/sprints', {
       method: 'POST',
       body: JSON.stringify(payload),
       headers: {
@@ -137,10 +111,11 @@ export default function NuevoUS({
       },
     });
   };
-  const updateUS = async (id: any, currentUS: UserStory) => {
-    let payload = { ...currentUS };
 
-    await fetch('http://localhost:3000/api/historias/' + id, {
+  const updateSprint = async (id: any, currentSprint: Sprint) => {
+    let payload = { ...currentSprint };
+
+    await fetch('http://localhost:3000/api/sprints/' + id, {
       method: 'PUT',
       body: JSON.stringify(payload),
       headers: {
@@ -151,10 +126,10 @@ export default function NuevoUS({
 
   const handleDelete = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/historias/' + userStory.id_us, {
+      const res = await fetch('http://localhost:3000/api/historias/' + sprint.id_us, {
         method: 'DELETE',
       });
-      refetchUStories();
+      refetchSprints();
       setOpen(false);
     } catch (error) {
       console.log(error);
@@ -166,12 +141,12 @@ export default function NuevoUS({
   };
 
   const handleChange = ({ target: { name, value } }: ChangeInputHandler) =>
-    setCurrentUS({ ...currentUS, [name]: value });
+    setCurrentSprint({ ...currentSprint, [name]: value });
 
   function afterSaved() {
-    setCurrentUS(inititalState);
-    refetchUStories();
-    setUserStory(null);
+    setCurrentSprint(inititalState);
+    refetchSprints();
+    setSprint(null);
     setOpen(false);
   }
 
@@ -179,10 +154,10 @@ export default function NuevoUS({
     e.preventDefault();
     setLoading(true);
     try {
-      if (userStory?.hasOwnProperty('id_us')) {
-        updateUS(userStory.id_us, currentUS);
+      if (sprint?.hasOwnProperty('id_us')) {
+        updateSprint(sprint.id_us, currentSprint);
       } else {
-        createUS(currentUS);
+        createSprint(currentSprint);
       }
       afterSaved();
     } catch (error) {
@@ -196,9 +171,7 @@ export default function NuevoUS({
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle className="bg-gray-900 text-white">
-          {userStory ? 'Editar UserStory' : ' Agregar UserStory'}
-        </DialogTitle>
+        <DialogTitle className="bg-gray-900 text-white">{sprint ? 'Editar Sprint' : ' Agregar Sprint'}</DialogTitle>
         <form onSubmit={handleSubmit}>
           <div className="bg-sand-300 space-y-4 w-full p-8 pt-4 ">
             <Input
@@ -206,57 +179,39 @@ export default function NuevoUS({
               placeholder="Nombre"
               name="nombre"
               onChange={handleChange}
-              value={currentUS.nombre}
+              value={currentSprint.nombre}
               required
             />
-            <Input
-              type="text"
-              placeholder="Descripcion"
-              name="descripcion"
-              onChange={handleChange}
-              value={currentUS.descripcion}
-            />
-            <div className="flex flex-col">
-              <text className="text-lg">Asignar a </text>
-              <Select
-                value={currentUS.id_user}
-                onChange={(e: any) => setCurrentUS({ ...currentUS, id_user: e.target.value })}
-                input={<OutlinedInput label="Tag" />}
-                MenuProps={MenuProps}
-              >
-                <MenuItem value={''}>
-                  <ListItemText primary={'Ninguno'} />
-                </MenuItem>
-                {!isNilorEmpty(usuarios) &&
-                  usuarios.map((user: any) => (
-                    <MenuItem key={user.id_user} value={user.id_user}>
-                      <ListItemText primary={user.name} />
-                    </MenuItem>
-                  ))}
-              </Select>
-            </div>
-            <div className="flex flex-col">
-              <text className="text-lg">Sprint?</text>
-              <Select
-                value={selectedSprint}
-                onChange={(e: any) => setCurrentUS({ ...currentUS, id_sprint: e.target.value })}
-                input={<OutlinedInput label="Tag" />}
-                MenuProps={MenuProps}
-              >
-                {!isNilorEmpty(sprints) &&
-                  sprints.map((sprint: any) => (
-                    <MenuItem key={sprint.id_sprint} value={sprint.id_sprint}>
-                      <ListItemText primary={sprint.nombre} />
-                    </MenuItem>
-                  ))}
-              </Select>
+            <div className="flex flex-row space-x-4">
+              <div className="flex flex-col">
+                <text className="text-lg bg-transparent">Inicio</text>
+                <input
+                  //onChange={(e: any) => setSelectedRol({ ...selectedRol, valido_hasta: e.target.value })}
+                  type="date"
+                  className="bg-transparent ring-1 p-2 rounded-sm ring-gray-500"
+                  name="fecha_inicio"
+                  onChange={handleChange}
+                  value={currentSprint.fecha_inicio}
+                />
+              </div>
+              <div className="flex flex-col">
+                <text className="text-lg bg-transparent">Fin </text>
+                <input
+                  //onChange={(e: any) => setSelectedRol({ ...selectedRol, valido_hasta: e.target.value })}
+                  type="date"
+                  className="bg-transparent ring-1 p-2 rounded-sm ring-gray-500"
+                  name="fecha_fin"
+                  onChange={handleChange}
+                  value={currentSprint.fecha_fin}
+                />
+              </div>
             </div>
             <div className="flex flex-col">
               <text className="text-lg">Estado</text>
               <Select
-                value={currentUS.id_estado}
+                value={currentSprint.id_estado}
                 onChange={(event: SelectChangeEvent<any>) =>
-                  setCurrentUS({ ...currentUS, id_estado: event.target.value })
+                  setCurrentSprint({ ...currentSprint, id_estado: event.target.value })
                 }
                 input={<OutlinedInput label="Tag" />}
                 MenuProps={MenuProps}
@@ -286,9 +241,9 @@ export default function NuevoUS({
               className="normal-case hover:bg-green-600 group flex items-center rounded-md bg-green-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
               type="submit"
             >
-              {userStory ? 'Actualizar' : 'Guardar'}
+              {sprint ? 'Actualizar' : 'Guardar'}
             </Button>
-            {userStory && (
+            {sprint && (
               <Button onClick={() => setOpenDelete(true)} className="normal-case" color="warning">
                 Eliminar Historia
               </Button>

@@ -12,7 +12,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (method) {
     case 'GET':
       try {
-        const text = 'SELECT * FROM proyectos WHERE id_proyecto = $1';
+        const text = `SELECT pr.*,b.id_backlog
+        FROM proyectos pr
+        join backlogs b
+        on pr.id_proyecto = b.id_proyecto
+        WHERE pr.id_proyecto = $1`;
         const values = [id];
         const result = await conn.query(text, values);
 

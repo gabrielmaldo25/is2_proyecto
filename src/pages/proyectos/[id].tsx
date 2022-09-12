@@ -17,8 +17,9 @@ import {
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NuevoUS from 'src/components/historias/nuevo';
-import { UserStory } from 'src/interfaces/interfaces';
+import { UserStory, Sprint } from 'src/interfaces/interfaces';
 import { GetServerSideProps } from 'next';
+import ABMSprint from 'src/components/abmSprint';
 interface StyledTabProps {
   label: string;
   value: string;
@@ -39,13 +40,18 @@ const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple {...props
 
 interface Props {
   historias: UserStory[];
+  sprints: Sprint[];
 }
 
-export default function test({ historias }: Props) {
+export default function test({ historias, sprints }: Props) {
+  console.log('SPRINT', sprints);
+
   const router = useRouter();
   const [proyecto, setProyecto] = useState<any>({});
   const [openUS, setOpenUS] = useState<any>(false);
   const [userStory, setUserStory] = useState<any>(null);
+  const [openSprint, setOpenSprint] = useState<any>(false);
+  const [sprint, setSprint] = useState<any>(null);
 
   /*Del boton nuevo */
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -58,7 +64,7 @@ export default function test({ historias }: Props) {
   };
   /****/
   const loadProject = async (id: string) => {
-    const res = await fetch('http://localhost:3000/api/proyectos/' + id);
+    let res = await fetch('http://localhost:3000/api/proyectos/' + id);
     const project = await res.json();
     setProyecto(project);
   };
@@ -118,7 +124,7 @@ export default function test({ historias }: Props) {
             }}
           >
             <MenuItem onClick={() => setOpenUS(true)}>Historia de Usuario</MenuItem>
-            <MenuItem onClick={handleClose}>Sprint</MenuItem>
+            <MenuItem onClick={() => setOpenSprint(true)}>Sprint</MenuItem>
           </Menu>
         </header>
 
@@ -139,54 +145,89 @@ export default function test({ historias }: Props) {
           <div className="bg-white p-4 sm:px-8 sm:pt-6 sm:pb-8 lg:p-4 xl:px-8 xl:pt-6 xl:pb-8  text-sm leading-6 relative flex flex-grow ">
             <TabPanel value={'0'} style={{ flex: 1 }}>
               <div>
-                <Accordion>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                    <Typography>Sprint en curso</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>US en del sprint en curso</AccordionDetails>
-                </Accordion>
-                <Accordion>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2a-content" id="panel2a-header">
-                    <Typography>Sprint en cola</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Typography>Los us de un sprint por comenzar.</Typography>
-                  </AccordionDetails>
-                </Accordion>
+                {sprints.map((sprint) => (
+                  <Accordion>
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
+                      <Typography>
+                        Sprint {sprint.id_sprint} {!isNilorEmpty(sprint.nombre) ? `: ${sprint.nombre}` : null}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      {historias
+                        .filter((story) => story.id_sprint == sprint.id_sprint)
+                        .map((story: any) => (
+                          <li>
+                            <a
+                              onClick={() => {
+                                setUserStory(story);
+                                setOpenUS(true);
+                              }}
+                              className="hover:bg-green-600 hover:ring-green-400 hover:shadow-md group rounded-md p-1 bg-green-300 ring-1 ring-slate-200 shadow-sm flex"
+                            >
+                              <div className="grid sm:block lg:grid xl:block items-center">
+                                <div className="flex flex-col text-slate-900 group-hover:text-white">
+                                  <div>
+                                    <dt className="sr-only">Title</dt>
+                                    <dd className=" font-semibold ">{story.nombre}</dd>
+                                  </div>
+                                  <div>
+                                    <dt className="sr-only">Category</dt>
+                                    <dd className="">{story.descripcion}</dd>
+                                  </div>
+                                </div>
+                                <div>
+                                  <dt className="sr-only">Category</dt>
+                                  <dd className=""> ESTADO | ASIGNADO A QUIEN </dd>
+                                </div>
+                              </div>
+                            </a>
+                          </li>
+                        ))}
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
+              </div>
+              <div>
                 <Accordion>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel3a-content" id="panel3a-header">
                     <Typography>Backlog</Typography>
                   </AccordionSummary>
                   <AccordionDetails>
                     <ul className=" grid grid-cols-1 gap-4 text-sm ">
-                      {historias.map((story: any) => (
-                        <li>
-                          <a
-                            onClick={() => {
-                              setUserStory(story);
-                              setOpenUS(true);
-                            }}
-                            className="hover:bg-green-600 hover:ring-green-400 hover:shadow-md group rounded-md p-1 bg-green-300 ring-1 ring-slate-200 shadow-sm flex"
-                          >
-                            <div className="grid sm:block lg:grid xl:block items-center">
-                              <div className="flex flex-col text-slate-900 group-hover:text-white">
-                                <div>
-                                  <dt className="sr-only">Title</dt>
-                                  <dd className=" font-semibold ">{story.nombre}</dd>
+                      {historias
+                        .filter((story) => isNilorEmpty(story.id_sprint))
+                        .map((story: any) => (
+                          <li>
+                            <a
+                              onClick={() => {
+                                setUserStory(story);
+                                setOpenUS(true);
+                              }}
+                              className="hover:bg-green-600 hover:ring-green-400 hover:shadow-md group rounded-md p-1 bg-green-300 ring-1 ring-slate-200 shadow-sm flex"
+                            >
+                              <div className="grid sm:block lg:grid xl:block items-center">
+                                <div className="flex flex-col text-slate-900 group-hover:text-white">
+                                  <div>
+                                    <dt className="sr-only">Title</dt>
+                                    <dd className=" font-semibold ">{story.nombre}</dd>
+                                  </div>
+                                  <div>
+                                    <dt className="sr-only">Category</dt>
+                                    <dd className="">{story.descripcion}</dd>
+                                  </div>
                                 </div>
                                 <div>
                                   <dt className="sr-only">Category</dt>
-                                  <dd className="">{story.descripcion}</dd>
+                                  <dd className=""> ESTADO | ASIGNADO A QUIEN </dd>
                                 </div>
                               </div>
-                              <div>
-                                <dt className="sr-only">Category</dt>
-                                <dd className=""> ESTADO | ASIGNADO A QUIEN </dd>
-                              </div>
-                            </div>
-                          </a>
-                        </li>
-                      ))}
+                            </a>
+                          </li>
+                        ))}
 
                       <li className="flex">
                         <a
@@ -225,15 +266,27 @@ export default function test({ historias }: Props) {
           refetchUStories={refetchUStories}
         />
       )}
+      {openSprint && (
+        <ABMSprint
+          open={openSprint}
+          setOpen={setOpenSprint}
+          id_backlog={proyecto.id_backlog}
+          sprint={sprint}
+          setSprint={setSprint}
+          refetchSprints={refetchUStories}
+        />
+      )}
     </Layout>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const res = await fetch(`http://localhost:3000/api/historias?id_proyecto=${context.params.id}`);
+  let res = await fetch(`http://localhost:3000/api/historias?id_proyecto=${context.params.id}`);
   const historias = await res.json();
-  console.log('HISTORIAS: ', historias);
+  console.log('HISTORIS: ', historias);
+  res = await fetch(`http://localhost:3000/api/sprints?id_proyecto=${context.params.id}`);
+  let sprints = await res.json();
   return {
-    props: { historias },
+    props: { historias, sprints },
   };
 };

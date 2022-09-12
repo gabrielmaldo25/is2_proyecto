@@ -12,11 +12,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (method) {
     case 'GET':
       try {
-        const text = 'SELECT * FROM user_stories WHERE id_us = $1';
+        const text = 'SELECT * FROM sprints WHERE id_sprint = $1';
         const values = [id];
         const result = await conn.query(text, values);
 
-        if (result.rowCount === 0) return res.status(404).json({ message: 'Historia no encontrada' });
+        if (result.rowCount === 0) return res.status(404).json({ message: 'Sprint no encontrado' });
 
         return res.json(result.rows[0]);
       } catch (error: any) {
@@ -24,7 +24,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     case 'PUT':
       try {
-        console.log('PUT US:', body);
         const { nombre, descripcion, id_estado, id_proyecto, id_user, id_sprint } = body;
         let values = [
           nombre,
