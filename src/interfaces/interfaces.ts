@@ -51,4 +51,5 @@ export interface Sprint {
   fecha_fin: any;
   id_estado: any;
   id_backlog: any;
+  estado: any;
 }

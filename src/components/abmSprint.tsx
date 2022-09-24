@@ -13,6 +13,7 @@ import {
 import { Sprint } from 'src/interfaces/interfaces';
 import { isNilorEmpty } from 'src/helpers';
 import Alert from '@mui/material/Alert';
+import fetchJson, { FetchError } from 'lib/fetchJson';
 
 function Input({ ...props }: any) {
   return (
@@ -66,8 +67,8 @@ export default function ABMSprint({
 }) {
   const inititalState = {
     nombre: '',
-    fecha_inicio: '',
-    fecha_fin: '',
+    fecha_inicio: null,
+    fecha_fin: null,
     id_estado: null,
     id_backlog: id_backlog,
   };
@@ -103,30 +104,47 @@ export default function ABMSprint({
 
   const createSprint = async (currentSprint: Sprint) => {
     let payload = { ...currentSprint };
-    await fetch('http://localhost:3000/api/sprints', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    try {
+      await fetchJson('http://localhost:3000/api/sprints', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      afterSaved();
+    } catch (error) {
+      if (error instanceof FetchError) {
+        setErrorMessage(error.data.message);
+      } else {
+        setErrorMessage('An unexpected error happened:' + error);
+      }
+    }
   };
 
   const updateSprint = async (id: any, currentSprint: Sprint) => {
     let payload = { ...currentSprint };
-
-    await fetch('http://localhost:3000/api/sprints/' + id, {
-      method: 'PUT',
-      body: JSON.stringify(payload),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    try {
+      await fetchJson('http://localhost:3000/api/sprints/' + id, {
+        method: 'PUT',
+        body: JSON.stringify(payload),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      afterSaved();
+    } catch (error) {
+      if (error instanceof FetchError) {
+        setErrorMessage(error.data.message);
+      } else {
+        setErrorMessage('An unexpected error happened:' + error);
+      }
+    }
   };
 
   const handleDelete = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/historias/' + sprint.id_us, {
+      const res = await fetch('http://localhost:3000/api/sprints/' + sprint.id_sprint, {
         method: 'DELETE',
       });
       refetchSprints();
@@ -140,8 +158,7 @@ export default function ABMSprint({
     setOpenDelete(false);
   };
 
-  const handleChange = ({ target: { name, value } }: ChangeInputHandler) =>
-    setCurrentSprint({ ...currentSprint, [name]: value });
+  const handleChange = ({ target: { name, value } }: any) => setCurrentSprint({ ...currentSprint, [name]: value });
 
   function afterSaved() {
     setCurrentSprint(inititalState);
@@ -154,18 +171,20 @@ export default function ABMSprint({
     e.preventDefault();
     setLoading(true);
     try {
-      if (sprint?.hasOwnProperty('id_us')) {
-        updateSprint(sprint.id_us, currentSprint);
+      if (sprint?.hasOwnProperty('id_sprint')) {
+        updateSprint(sprint.id_sprint, currentSprint);
       } else {
         createSprint(currentSprint);
       }
-      afterSaved();
     } catch (error) {
       console.log(error);
     }
 
     setLoading(false);
   };
+  useEffect(() => {
+    console.log('CURRENT SPRINT: ', currentSprint);
+  }, [currentSprint]);
 
   if (loading) return <p>Loading...</p>;
   return (
@@ -209,10 +228,9 @@ export default function ABMSprint({
             <div className="flex flex-col">
               <text className="text-lg">Estado</text>
               <Select
+                name="id_estado"
                 value={currentSprint.id_estado}
-                onChange={(event: SelectChangeEvent<any>) =>
-                  setCurrentSprint({ ...currentSprint, id_estado: event.target.value })
-                }
+                onChange={handleChange}
                 input={<OutlinedInput label="Tag" />}
                 MenuProps={MenuProps}
               >
@@ -245,16 +263,16 @@ export default function ABMSprint({
             </Button>
             {sprint && (
               <Button onClick={() => setOpenDelete(true)} className="normal-case" color="warning">
-                Eliminar Historia
+                Eliminar Sprint
               </Button>
             )}
           </DialogActions>
         </form>
       </Dialog>
       <Dialog open={openDelete} onClose={handleCloseDelete}>
-        <DialogTitle className="bg-gray-900 text-white">Eliminar Historia</DialogTitle>
+        <DialogTitle className="bg-gray-900 text-white">Eliminar Sprint</DialogTitle>
         <div className="bg-gray-900 text-white p-4">
-          <text>Estas seguro de que quieres eliminar esta historia?</text>
+          <text>Estas seguro de que quieres eliminar este sprint?</text>
         </div>
         <DialogActions className="bg-gray-900">
           <Button
