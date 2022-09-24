@@ -40,6 +40,8 @@ export interface UserStory {
   id_user?: any;
   id_proyecto: any;
   descripcion?: any;
+  usuario?: any;
+  estado: any;
 }
 
 export interface Sprint {

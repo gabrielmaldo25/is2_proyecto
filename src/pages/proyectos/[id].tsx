@@ -180,8 +180,7 @@ export default function test({ historias, sprints }: Props) {
                                   </div>
                                 </div>
                                 <div>
-                                  <dt className="sr-only">Category</dt>
-                                  <dd className=""> ESTADO | ASIGNADO A QUIEN </dd>
+                                  <dd className=""> {story.estado} | {story.usuario?.name || 'SIN ASIGNAR'} </dd>
                                 </div>
                               </div>
                             </a>
@@ -222,7 +221,9 @@ export default function test({ historias, sprints }: Props) {
                                 </div>
                                 <div>
                                   <dt className="sr-only">Category</dt>
-                                  <dd className=""> ESTADO | ASIGNADO A QUIEN </dd>
+                                  <dd className="">
+                                  {story.estado} | {story.usuario?.name || 'SIN ASIGNAR'}{' '}
+                                  </dd>
                                 </div>
                               </div>
                             </a>
