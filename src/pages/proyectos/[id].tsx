@@ -20,6 +20,9 @@ import NuevoUS from 'src/components/historias/nuevo';
 import { UserStory, Sprint } from 'src/interfaces/interfaces';
 import { GetServerSideProps } from 'next';
 import ABMSprint from 'src/components/abmSprint';
+import Kanban from './kanban';
+import EditIcon from '@mui/icons-material/Edit';
+
 interface StyledTabProps {
   label: string;
   value: string;
@@ -142,55 +145,71 @@ export default function test({ historias, sprints }: Props) {
               <StyledTab label="Burndown Chart" value={'2'} />
             </TabList>
           </Box>
-          <div className="bg-white p-4 sm:px-8 sm:pt-6 sm:pb-8 lg:p-4 xl:px-8 xl:pt-6 xl:pb-8  text-sm leading-6 relative flex flex-grow ">
+          <div className="bg-green-400 text-sm leading-6 relative flex flex-grow ">
             <TabPanel value={'0'} style={{ flex: 1 }}>
               <div>
                 {sprints.map((sprint) => (
-                  <Accordion>
+                  <Accordion className="mt-4">
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
                       id="panel1a-header"
                     >
-                      <Typography>
-                        Sprint {sprint.id_sprint} {!isNilorEmpty(sprint.nombre) ? `: ${sprint.nombre}` : null}
-                      </Typography>
+                      <div className="flex flex-row gap-4">
+                        <Typography >
+                          Sprint {sprint.id_sprint} {!isNilorEmpty(sprint.nombre) ? `: ${sprint.nombre}` : null}
+                        </Typography>
+                        <EditIcon
+                          sx={{ color: 'black', '&:hover': { color: 'green' } }}
+                          onClick={() => {
+                            setSprint(sprint);
+                            setOpenSprint(true);
+                          }}
+                        />
+                      </div>
                     </AccordionSummary>
                     <AccordionDetails>
-                      {historias
-                        .filter((story) => story.id_sprint == sprint.id_sprint)
-                        .map((story: any) => (
-                          <li>
-                            <a
-                              onClick={() => {
-                                setUserStory(story);
-                                setOpenUS(true);
-                              }}
-                              className="hover:bg-green-600 hover:ring-green-400 hover:shadow-md group rounded-md p-1 bg-green-300 ring-1 ring-slate-200 shadow-sm flex"
-                            >
-                              <div className="grid sm:block lg:grid xl:block items-center">
-                                <div className="flex flex-col text-slate-900 group-hover:text-white">
-                                  <div>
-                                    <dt className="sr-only">Title</dt>
-                                    <dd className=" font-semibold ">{story.nombre}</dd>
+                      {historias.filter((story) => story.id_sprint == sprint.id_sprint).length > 0 ? (
+                        historias
+                          .filter((story) => story.id_sprint == sprint.id_sprint)
+                          .map((story: any) => (
+                            <li>
+                              <a
+                                onClick={() => {
+                                  setUserStory(story);
+                                  setOpenUS(true);
+                                }}
+                                className="hover:bg-green-600 hover:ring-green-400 hover:shadow-md group rounded-md p-1 bg-green-300 ring-1 ring-slate-200 shadow-sm flex"
+                              >
+                                <div className="grid sm:block lg:grid xl:block items-center">
+                                  <div className="flex flex-col text-slate-900 group-hover:text-white">
+                                    <div>
+                                      <dt className="sr-only">Title</dt>
+                                      <dd className=" font-semibold ">{story.nombre}</dd>
+                                    </div>
+                                    <div>
+                                      <dt className="sr-only">Category</dt>
+                                      <dd className="">{story.descripcion}</dd>
+                                    </div>
                                   </div>
                                   <div>
-                                    <dt className="sr-only">Category</dt>
-                                    <dd className="">{story.descripcion}</dd>
+                                    <dd className="">
+                                      {' '}
+                                      {story.estado} | {story.usuario?.name || 'SIN ASIGNAR'}{' '}
+                                    </dd>
                                   </div>
                                 </div>
-                                <div>
-                                  <dd className=""> {story.estado} | {story.usuario?.name || 'SIN ASIGNAR'} </dd>
-                                </div>
-                              </div>
-                            </a>
-                          </li>
-                        ))}
+                              </a>
+                            </li>
+                          ))
+                      ) : (
+                        <div className="text-lg font-bold">Sin historias aún...</div>
+                      )}
                     </AccordionDetails>
                   </Accordion>
                 ))}
               </div>
-              <div>
+              <div className="pt-4">
                 <Accordion>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel3a-content" id="panel3a-header">
                     <Typography>Backlog</Typography>
@@ -222,7 +241,7 @@ export default function test({ historias, sprints }: Props) {
                                 <div>
                                   <dt className="sr-only">Category</dt>
                                   <dd className="">
-                                  {story.estado} | {story.usuario?.name || 'SIN ASIGNAR'}{' '}
+                                    {story.estado} | {story.usuario?.name || 'SIN ASIGNAR'}{' '}
                                   </dd>
                                 </div>
                               </div>
@@ -252,7 +271,9 @@ export default function test({ historias, sprints }: Props) {
                 </Accordion>
               </div>
             </TabPanel>
-            <TabPanel value={'1'}>Item Two</TabPanel>
+            <TabPanel value={'1'} style={{ flex: 1 }}>
+              <Kanban id_sprint={1} />
+            </TabPanel>
             <TabPanel value={'2'}>Item Three</TabPanel>{' '}
           </div>
         </TabContext>

@@ -79,7 +79,7 @@ export default function ABMSprint({
 
   useEffect(() => {
     setLoading(true);
-    fetch('/api/extra/estados')
+    fetch('/api/extra/estados_sprint')
       .then((res) => res.json())
       .then((data) => {
         setEstados(data);

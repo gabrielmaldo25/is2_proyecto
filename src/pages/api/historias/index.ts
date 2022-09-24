@@ -18,7 +18,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         on us.id_user = up.id_user
         left join usuarios u
         on u.id_user = up.id_user
-        join estados e 
+        join estados_us e 
         on e.id_estado = us.id_estado
         where us.id_proyecto = $1`;
         let values = [id_proyecto];

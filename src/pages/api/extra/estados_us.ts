@@ -8,7 +8,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   switch (method) {
     case 'GET':
       try {
-        const query = `select * from estados`;
+        const query = `select * from estados_us`;
         const response = await conn.query(query);
         return res.json(response.rows);
       } catch (error: any) {

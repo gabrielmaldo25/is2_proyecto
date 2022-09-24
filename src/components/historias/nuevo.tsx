@@ -102,7 +102,7 @@ export default function NuevoUS({
       .then((data) => {
         setSprints(data);
       });
-    fetch('/api/extra/estados')
+    fetch('/api/extra/estados_us')
       .then((res) => res.json())
       .then((data) => {
         setEstados(data);
