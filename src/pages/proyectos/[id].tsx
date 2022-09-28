@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from 'react';
 import Layout from 'src/components/layout';
 import { useRouter } from 'next/router';
@@ -99,6 +100,10 @@ export default function test({ historias, sprints }: Props) {
     router.replace(router.asPath);
   };
 
+  const started_sprint = sprints.filter((sprint) => sprint.estado == 'En Curso').map((sprint) => ( sprint.id_sprint));
+  // console.log(started_sprint + " started sprint ")
+  // console.log(JSON.stringify(historias.filter((story) => story.id_sprint == started_sprint)) + "encontro")
+
   if (isNilorEmpty(proyecto)) return <text>No hay nada</text>;
   return (
     <Layout>
@@ -107,7 +112,7 @@ export default function test({ historias, sprints }: Props) {
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-white">{proyecto.nombre} </h1>
             <a
-              onClick={handleClick}
+              onClick={() => handleClick}
               className="hover:bg-green-400 group flex items-center rounded-md bg-green-600 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
             >
               <svg width="20" height="20" fill="currentColor" className="mr-2" aria-hidden="true">
@@ -210,7 +215,8 @@ export default function test({ historias, sprints }: Props) {
 
                       <li className="flex">
                         <a
-                          href="/new"
+                          // href="/historias"
+                          onClick={() => setOpenUS(true)}
                           className="hover:border-green-600 hover:border-solid hover:bg-white hover:text-green-600 group w-full flex flex-col items-center justify-center rounded-md border-2 border-dashed border-slate-300 text-sm leading-6 text-slate-900 font-medium py-3"
                         >
                           <svg
@@ -231,7 +237,8 @@ export default function test({ historias, sprints }: Props) {
               </div>
             </TabPanel>
             <TabPanel value={'1'} style={{ flex: 1 }}>
-              <Kanban id_sprint={1} />
+              <Kanban
+               user_stories={historias.filter((story) => story.id_sprint == started_sprint)} />
             </TabPanel>
             <TabPanel value={'2'}>Item Three</TabPanel>{' '}
           </div>

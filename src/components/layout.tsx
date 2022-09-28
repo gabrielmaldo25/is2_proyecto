@@ -105,7 +105,7 @@ export default function Layout({ children }: any) {
                           >
                             {navigation[1].name}
                           </a>
-                        ) : null}
+                        ) : null} 
                         {user?.seguridad ? (
                           <a
                             key={'seguridad'}
@@ -113,7 +113,7 @@ export default function Layout({ children }: any) {
                               ' hover:bg-green-400 text-white',
                               'px-3 py-2 rounded-md text-sm font-medium',
                             )}
-                            onClick={handleClick}
+                            onClick={() => handleClick}
                           >
                             Seguridad
                           </a>

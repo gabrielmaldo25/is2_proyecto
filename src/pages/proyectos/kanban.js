@@ -1,8 +1,12 @@
-import React from 'react';
-class Kanban extends React.Component {
-  render() {
-    const { id_sprint } = this.props;
-    console.log('id_sprint', id_sprint);
+import React, {useEffect, useState} from 'react';
+
+
+export default function Kanban(user_stories) {
+
+  // useEffect(() => {
+  //   console.log(JSON.stringify(user_stories) + "holaaaaaaaaaaaaaaaaaaaaaaa");
+  // }, [user_stories]);
+   
     const style = {
       padding: '15px',
       paddingTop: '5px',
@@ -11,10 +15,9 @@ class Kanban extends React.Component {
     return (
       <div style={style}>
         <h1>Project Kanban Board</h1>
-        <KanbanBoard />
+        <KanbanBoard user_stories={user_stories}/>
       </div>
     );
-  }
 }
 
 /*
@@ -25,13 +28,13 @@ class KanbanBoard extends React.Component {
     super(props);
     this.state = {
       isLoading: true,
-      projects: [],
+      user_stories: [],
       draggedOverCol: 0,
     };
     this.handleOnDragEnter = this.handleOnDragEnter.bind(this);
     this.handleOnDragEnd = this.handleOnDragEnd.bind(this);
     this.columns = [
-      { name: 'Backlog', stage: 1 },
+      // { name: 'Backlog', stage: 1 },
       { name: 'To Do', stage: 2 },
       { name: 'In Progress', stage: 3 },
       { name: 'Done', stage: 4 },
@@ -39,7 +42,7 @@ class KanbanBoard extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({ projects: projectList, isLoading: false });
+    this.setState({ user_stories: this.props.user_stories.user_stories, isLoading: false });
   }
 
   //this is called when a Kanban card is dragged over a column (called by column)
@@ -48,19 +51,20 @@ class KanbanBoard extends React.Component {
   }
 
   //this is called when a Kanban card dropped over a column (called by card)
-  handleOnDragEnd(e, project) {
-    const updatedProjects = this.state.projects.slice(0);
+  handleOnDragEnd(e, user_story) {
+    const updatedProjects = this.state.user_stories.slice(0);
     updatedProjects.find((projectObject) => {
-      return projectObject.name === project.name;
-    }).project_stage = this.state.draggedOverCol;
-    this.setState({ projects: updatedProjects });
+      console.log(projectObject.nombre + " linea 57")
+      return projectObject.nombre === user_story.nombre;
+    }).id_estado = this.state.draggedOverCol;
+    this.setState({ user_stories: updatedProjects });
   }
 
   render() {
     if (this.state.isLoading) {
       return <h3>Loading...</h3>;
     }
-
+    // console.log(JSON.stringify(this.props.user_stories.user_stories) + "KanbanBoard");
     return (
       <div>
         {this.columns.map((column) => {
@@ -68,8 +72,8 @@ class KanbanBoard extends React.Component {
             <KanbanColumn
               name={column.name}
               stage={column.stage}
-              projects={this.state.projects.filter((project) => {
-                return parseInt(project.project_stage, 10) === column.stage;
+              user_stories={this.state.user_stories.filter((user_story) => {
+                return parseInt(user_story.id_estado, 10) === column.stage;
               })}
               onDragEnter={this.handleOnDragEnter}
               onDragEnd={this.handleOnDragEnd}
@@ -96,8 +100,8 @@ class KanbanColumn extends React.Component {
   }
 
   generateKanbanCards() {
-    return this.props.projects.slice(0).map((project) => {
-      return <KanbanCard project={project} key={project.name} onDragEnd={this.props.onDragEnd} />;
+    return this.props.user_stories.slice(0).map((user_story) => {
+      return <KanbanCard user_story={user_story} key={user_story.id_us} onDragEnd={this.props.onDragEnd} />;
     });
   }
 
@@ -125,7 +129,7 @@ class KanbanColumn extends React.Component {
         }}
       >
         <h4>
-          {this.props.stage}. {this.props.name} ({this.props.projects.length})
+          {this.props.name} ({this.props.user_stories.length})
         </h4>
         {this.generateKanbanCards()}
         <br />
@@ -161,16 +165,16 @@ class KanbanCard extends React.Component {
         style={cardStyle}
         draggable={true}
         onDragEnd={(e) => {
-          this.props.onDragEnd(e, this.props.project);
+          this.props.onDragEnd(e, this.props.user_story);
         }}
       >
         <div>
-          <h4>{this.props.project.name}</h4>
+          <h4>{this.props.user_story.nombre}</h4>
         </div>
         {this.state.collapsed ? null : (
           <div>
             <strong>Description: </strong>
-            {this.props.project.description}
+            {this.props.user_story.descripcion}
             <br />
           </div>
         )}
@@ -228,4 +232,4 @@ let projectList = [
   },
 ];
 
-export default Kanban;
+// export default Kanban;
