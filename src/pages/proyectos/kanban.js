@@ -1,3 +1,4 @@
+import { borderRadius, margin } from '@mui/system';
 import React, {useEffect, useState} from 'react';
 
 
@@ -8,13 +9,14 @@ export default function Kanban(user_stories) {
   // }, [user_stories]);
    
     const style = {
-      padding: '15px',
-      paddingTop: '5px',
+      paddingTop: '25px',
+      height: '400px',
+      textAlign: 'center',
     };
 
     return (
       <div style={style}>
-        <h1>Project Kanban Board</h1>
+        {/* <h1>Project Kanban Board</h1> */}
         <KanbanBoard user_stories={user_stories}/>
       </div>
     );
@@ -61,6 +63,10 @@ class KanbanBoard extends React.Component {
   }
 
   render() {
+    const boardStyle = {
+      paddingLeft: '5px',
+    };
+
     if (this.state.isLoading) {
       return <h3>Loading...</h3>;
     }
@@ -109,14 +115,16 @@ class KanbanColumn extends React.Component {
     const columnStyle = {
       display: 'inline-block',
       verticalAlign: 'top',
-      marginRight: '5px',
+      marginRight: '15px',
       marginBottom: '5px',
       paddingLeft: '5px',
       paddingTop: '0px',
-      width: '230px',
+      width: '280px',
       textAlign: 'center',
       backgroundColor: this.state.mouseIsHovering ? '#d3d3d3' : '#f0eeee',
+      borderRadius: '7px',
     };
+    
     return (
       <div
         style={columnStyle}
@@ -128,8 +136,10 @@ class KanbanColumn extends React.Component {
           this.setState({ mouseIsHovering: false });
         }}
       >
-        <h4>
+        <h4 >
+        <strong>
           {this.props.name} ({this.props.user_stories.length})
+          </strong>
         </h4>
         {this.generateKanbanCards()}
         <br />
@@ -151,13 +161,17 @@ class KanbanCard extends React.Component {
 
   render() {
     const cardStyle = {
-      backgroundColor: '#f9f7f7',
+      // backgroundColor: '#f9f7f7',
+      backgroundColor: '#FFFFFF',
       paddingLeft: '0px',
       paddingTop: '5px',
       paddingBottom: '5px',
-      marginLeft: '0px',
-      marginRight: '5px',
-      marginBottom: '5px',
+      // marginLeft: '0px',
+      margin: '5px',
+      // marginBottom: '5px',
+      width: '260px',
+      borderRadius: '7px',
+
     };
 
     return (
@@ -168,14 +182,16 @@ class KanbanCard extends React.Component {
           this.props.onDragEnd(e, this.props.user_story);
         }}
       >
-        <div>
+        <div style={{textAlign: 'start', paddingLeft: '8px'}}>
           <h4>{this.props.user_story.nombre}</h4>
         </div>
         {this.state.collapsed ? null : (
-          <div>
-            <strong>Description: </strong>
+          <div style={{textAlign: 'start', margin: '5px',fontSize: '13px'}}>
+            {/* <br /> */}
+            <h4><strong>Descripción: </strong>
             {this.props.user_story.descripcion}
             <br />
+            </h4>
           </div>
         )}
         <div
@@ -232,4 +248,3 @@ let projectList = [
   },
 ];
 
-// export default Kanban;
