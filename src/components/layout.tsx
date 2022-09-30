@@ -78,7 +78,7 @@ export default function Layout({ children }: any) {
                   <div className="flex items-center">
                     <div className="hidden md:block">
                       <div className=" flex items-baseline space-x-4">
-                        {user?.proyectos ? (
+                        {/* {user?.proyectos ? ( */}
                           <a
                             key={navigation[0].name}
                             href={navigation[0].href}
@@ -91,8 +91,8 @@ export default function Layout({ children }: any) {
                           >
                             {navigation[0].name}
                           </a>
-                        ) : null}
-                        {user?.usuarios ? (
+                        {/* ) : null} */}
+                        {/* {user?.usuarios ? ( */}
                           <a
                             key={navigation[1].name}
                             href={navigation[1].href}
@@ -105,8 +105,8 @@ export default function Layout({ children }: any) {
                           >
                             {navigation[1].name}
                           </a>
-                        ) : null}
-                        {user?.seguridad ? (
+                        {/* ) : null} */}
+                        {/* {user?.seguridad ? ( */}
                           <a
                             key={'seguridad'}
                             className={classNames(
@@ -117,7 +117,7 @@ export default function Layout({ children }: any) {
                           >
                             Seguridad
                           </a>
-                        ) : null}
+                        {/* ) : null} */}
                         <Menu2
                           id="basic-menu"
                           anchorEl={anchorEl}

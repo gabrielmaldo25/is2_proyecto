@@ -19,6 +19,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NuevoUS from 'src/components/historias/nuevo';
 import { UserStory } from 'src/interfaces/interfaces';
 import { GetServerSideProps } from 'next';
+import useUser from "../../../lib/useUser";
+
+
 interface StyledTabProps {
   label: string;
   value: string;
@@ -91,6 +94,11 @@ export default function test({ historias }: Props) {
     router.replace(router.asPath);
   };
 
+  const { user, mutateUser } = useUser({
+    redirectTo: "/",
+    redirectIfFound: false,
+  });
+
   if (isNilorEmpty(proyecto)) return <text>No hay nada</text>;
   return (
     <Layout>
@@ -98,6 +106,7 @@ export default function test({ historias }: Props) {
         <header className="bg-gray-900 space-y-4 p-4 sm:px-8 sm:py-6 lg:p-4 xl:px-8 xl:py-6">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-white">{proyecto.nombre} </h1>
+            {user?.proyectos ? (
             <a
               onClick={handleClick}
               className="hover:bg-green-400 group flex items-center rounded-md bg-green-600 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
@@ -107,6 +116,7 @@ export default function test({ historias }: Props) {
               </svg>
               Nuevo
             </a>
+            ) : null} 
           </div>
           <Menu
             id="basic-menu"
