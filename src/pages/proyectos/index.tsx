@@ -4,6 +4,7 @@ import Nuevo from './nuevo';
 import { useRouter } from 'next/router';
 import EditIcon from '@mui/icons-material/Edit';
 import InitialIcon from 'src/components/iniciales';
+import useUser from "../../../lib/useUser";
 
 export default function test() {
   const [proyectos, setProyectos] = useState<any>([]);
@@ -18,6 +19,11 @@ export default function test() {
       });
   };
 
+  const { user, mutateUser } = useUser({
+    redirectTo: "/",
+    redirectIfFound: false,
+  });
+
   useEffect(() => {
     refreshData();
   }, []);
@@ -30,6 +36,7 @@ export default function test() {
             <header className="bg-gray-900 space-y-4 p-4 sm:px-8 sm:py-6 lg:p-4 xl:px-8 xl:py-6">
               <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-bold text-white">Proyectos</h1>
+                {user?.proyectos ? (
                 <a
                   onClick={() => setOpen(true)}
                   className="hover:bg-green-400 group flex items-center rounded-md bg-green-600 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
@@ -39,6 +46,7 @@ export default function test() {
                   </svg>
                   Nuevo
                 </a>
+                ) : null} 
               </div>
               <form className="group relative">
                 <svg
@@ -99,6 +107,7 @@ export default function test() {
                         </div>
                       </div>
                       <div>
+                      {user?.proyectos ? (
                         <EditIcon
                           sx={{ color: 'white', '&:hover': { color: 'black' } }}
                           onClick={() => {
@@ -106,12 +115,15 @@ export default function test() {
                             setOpen(true);
                           }}
                         />
+                        ) : null} 
+
                       </div>
                     </a>
                   </li>
                 ))}
 
                 <li className="flex">
+                {user?.proyectos ? (
                   <a
                     onClick={() => setOpen(true)}
                     className="hover:border-green-600 hover:border-solid hover:bg-white hover:text-green-600 group w-full flex flex-col items-center justify-center rounded-md border-2 border-dashed border-slate-300 text-sm leading-6 text-slate-900 font-medium py-3"
@@ -127,6 +139,7 @@ export default function test() {
                     </svg>
                     Nuevo Proyecto
                   </a>
+                  ) : null} 
                 </li>
               </>
             </ul>

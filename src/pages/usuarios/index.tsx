@@ -25,6 +25,7 @@ import {
 import { Usuario } from 'src/interfaces/interfaces';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
+import useUser from "../../../lib/useUser";
 /* *** */
 
 interface TablePaginationActionsProps {
@@ -103,6 +104,11 @@ export default function indexUsers({ usuarios }: Props) {
     setPage(0);
   };
 
+  const { user, mutateUser } = useUser({
+    redirectTo: "/",
+    redirectIfFound: false,
+  });
+
   /* *** */
 
   const [open, setOpen] = React.useState(false);
@@ -117,6 +123,7 @@ export default function indexUsers({ usuarios }: Props) {
             <header className="bg-gray-900 space-y-4 p-4  sm:py-6 lg:py-4  xl:py-6">
               <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-bold text-white">Usuarios</h1>
+                {user?.usuarios ? (
                 <a
                   className="hover:bg-green-600 group flex items-center rounded-md bg-green-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
                   onClick={() => setOpen(true)}
@@ -126,6 +133,7 @@ export default function indexUsers({ usuarios }: Props) {
                   </svg>
                   Nuevo
                 </a>
+              ) : null} 
               </div>
               <form className="group relative">
                 <svg
@@ -172,7 +180,7 @@ export default function indexUsers({ usuarios }: Props) {
                       className="bg-gray-900 hover:bg-green-300 ring-1 ring-gray-900 "
                       onClick={() => {
                         setUsuario(row);
-                        setOpen(true);
+                        user?.usuarios? setOpen(true) : null;
                       }}
                     >
                       <TableCell component="th" scope="row" className="text-sand-300 hover:text-gray-900">

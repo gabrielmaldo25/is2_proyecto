@@ -22,6 +22,8 @@ import { GetServerSideProps } from 'next';
 import ABMSprint from 'src/components/abmSprint';
 import Kanban from './kanban';
 import MostrarSprint from 'src/components/MostrarSprint';
+import useUser from '../../../lib/useUser';
+
 interface StyledTabProps {
   label: string;
   value: string;
@@ -99,6 +101,11 @@ export default function test({ historias, sprints }: Props) {
     router.replace(router.asPath);
   };
 
+  const { user, mutateUser } = useUser({
+    redirectTo: '/',
+    redirectIfFound: false,
+  });
+
   if (isNilorEmpty(proyecto)) return <text>No hay nada</text>;
   return (
     <Layout>
@@ -106,15 +113,17 @@ export default function test({ historias, sprints }: Props) {
         <header className="bg-gray-900 space-y-4 p-4 sm:px-8 sm:py-6 lg:p-4 xl:px-8 xl:py-6">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-white">{proyecto.nombre} </h1>
-            <a
-              onClick={handleClick}
-              className="hover:bg-green-400 group flex items-center rounded-md bg-green-600 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
-            >
-              <svg width="20" height="20" fill="currentColor" className="mr-2" aria-hidden="true">
-                <path d="M10 5a1 1 0 0 1 1 1v3h3a1 1 0 1 1 0 2h-3v3a1 1 0 1 1-2 0v-3H6a1 1 0 1 1 0-2h3V6a1 1 0 0 1 1-1Z" />
-              </svg>
-              Nuevo
-            </a>
+            {user?.proyectos ? (
+              <a
+                onClick={handleClick}
+                className="hover:bg-green-400 group flex items-center rounded-md bg-green-600 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
+              >
+                <svg width="20" height="20" fill="currentColor" className="mr-2" aria-hidden="true">
+                  <path d="M10 5a1 1 0 0 1 1 1v3h3a1 1 0 1 1 0 2h-3v3a1 1 0 1 1-2 0v-3H6a1 1 0 1 1 0-2h3V6a1 1 0 0 1 1-1Z" />
+                </svg>
+                Nuevo
+              </a>
+            ) : null}
           </div>
           <Menu
             id="basic-menu"
@@ -264,9 +273,10 @@ export default function test({ historias, sprints }: Props) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   let res = await fetch(`http://localhost:3000/api/historias?id_proyecto=${context.params.id}`);
   const historias = await res.json();
-  console.log('HISTORIS: ', historias);
   res = await fetch(`http://localhost:3000/api/sprints?id_proyecto=${context.params.id}`);
   let sprints = await res.json();
+  console.log('SPRINTS: ', sprints);
+
   return {
     props: { historias, sprints },
   };
