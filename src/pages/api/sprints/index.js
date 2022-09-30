@@ -44,7 +44,6 @@ export default async function (req, res) {
         let stories = [];
         let ban = false;
         let idSprint = null;
-        let b = 0;
 
         while (true) {
           if (response.rows.length > 0) {
@@ -82,6 +81,13 @@ export default async function (req, res) {
             break;
           }
         }
+
+        if (ban) {
+          //poner el nuevo sprint en curso
+          query2 = `Update sprints set id_estado = 6 where id_sprint = $1`; //id 6 es EN CURSO
+          await conn.query(query2, [idSprint]);
+        }
+
         //si hay historias pendientes actualizar su sprint
         if (stories.length > 0) {
           stories.map(async (story) => {
