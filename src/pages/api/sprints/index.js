@@ -25,6 +25,7 @@ let retornarBacklog = async (id_proyecto) => {
 export default async function (req, res) {
   const { method, body, query } = req;
   const { id_proyecto } = query;
+
   const { idBacklog } = await retornarBacklog(id_proyecto);
   switch (method) {
     case 'GET':
@@ -96,6 +97,20 @@ export default async function (req, res) {
           });
         }
 
+        //cerrar proyecto si ya no tiene sprint pendientes
+        let queryAux = `select * from sprints where id_backlog = $1`;
+        let response1 = await conn.query(queryAux, [idBacklog]);
+        query2 = `select e.estado from sprints s
+        join estados_sprint e on e.id_estado  = s.id_estado
+        where id_backlog =$1
+        and estado != 'Cerrado'`;
+        response = await conn.query(query2, [idBacklog]);
+
+        if (response1.rowCount > 0 && response.rowCount == 0) {
+          query2 = `update proyectos set abierto = false where id_proyecto = $1`;
+          response = await conn.query(query2, [id_proyecto]);
+        }
+
         let query = `select s.*,e.estado estado from
         backlogs b join sprints s
         on b.id_backlog = s.id_backlog
@@ -109,8 +124,8 @@ export default async function (req, res) {
       }
     case 'POST':
       try {
-        const { nombre, fecha_inicio, fecha_fin, id_estado, id_backlog } = body;
-        let values = [nombre, fecha_inicio, fecha_fin, id_estado, id_backlog];
+        const { nombre, fecha_inicio, fecha_fin, id_estado } = body;
+        let values = [nombre, fecha_inicio, fecha_fin, id_estado, idBacklog];
         /*traer id de estado = En Curso */
         let query = `Select * from estados_sprint where estado = 'En Curso'`;
         let response = await conn.query(query);
@@ -118,7 +133,7 @@ export default async function (req, res) {
         /*Comparar el id de en curso con el id que se recibe */
         if (id_aux == id_estado) {
           let query = `Select id_estado from sprints where id_backlog = $1 `;
-          response = await conn.query(query, [id_backlog]);
+          response = await conn.query(query, [idBacklog]);
           let aux = response.rows?.filter((row) => row.id_estado == id_estado);
           /*Si ya existe un sprint en curso retorna un error */
           if (aux?.length > 0) {

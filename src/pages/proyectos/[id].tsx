@@ -112,7 +112,9 @@ export default function test({ historias, sprints }: Props) {
       <section className="flex flex-col min-h-full">
         <header className="bg-gray-900 space-y-4 p-4 sm:px-8 sm:py-6 lg:p-4 xl:px-8 xl:py-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-white">{proyecto.nombre} </h1>
+            <h1 className="text-3xl font-bold text-white">
+              {proyecto.nombre} <h1 className="text-3xl font-bold text-red-600">{!proyecto.abierto && 'COMPLETADO'}</h1>
+            </h1>
             {user?.proyectos ? (
               <a
                 onClick={handleClick}
@@ -244,7 +246,7 @@ export default function test({ historias, sprints }: Props) {
         <ABMSprint
           open={openSprint}
           setOpen={setOpenSprint}
-          id_backlog={proyecto.id_backlog}
+          id_proyecto={router.query.id}
           sprint={sprint}
           setSprint={setSprint}
           refetchSprints={refetchUStories}
