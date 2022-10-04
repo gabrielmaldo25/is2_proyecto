@@ -22,6 +22,11 @@ export default function MostrarSprint({ sprint, setSprint, setOpenSprint, histor
           <Typography>
             Sprint {sprint.id_sprint} {!isNilorEmpty(sprint.nombre) ? `: ${sprint.nombre} (${sprint.estado}) ` : null}
           </Typography>
+          {sprint.fecha_inicio && sprint.fecha_fin && (
+            <div className="text-zinc-400">
+              {new Date(sprint.fecha_inicio).toLocaleDateString()} - {new Date(sprint.fecha_fin).toLocaleDateString()}
+            </div>
+          )}
           {sprint.estado !== 'Cerrado' && (
             <EditIcon
               sx={{ color: 'black', '&:hover': { color: 'green' } }}

@@ -67,8 +67,8 @@ export default function ABMSprint({
 }) {
   const inititalState = {
     nombre: '',
-    fecha_inicio: null,
-    fecha_fin: null,
+    fecha_inicio: new Date().toISOString().slice(0, 10),
+    fecha_fin:new Date(new Date().setDate(new Date().getDate() + 15)).toISOString().slice(0, 10),
     id_estado: null,
   };
   const [currentSprint, setCurrentSprint] = useState<Sprint>(inititalState);
