@@ -68,7 +68,7 @@ export default function ABMSprint({
   const inititalState = {
     nombre: '',
     fecha_inicio: new Date().toISOString().slice(0, 10),
-    fecha_fin:new Date(new Date().setDate(new Date().getDate() + 15)).toISOString().slice(0, 10),
+    fecha_fin: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString().slice(0, 10),
     id_estado: null,
   };
   const [currentSprint, setCurrentSprint] = useState<Sprint>(inititalState);
@@ -175,14 +175,18 @@ export default function ABMSprint({
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+
     try {
+      if (currentSprint.fecha_inicio > currentSprint.fecha_fin) {
+        throw 'LA FECHA FIN NO PUEDE SER MENOR A LA INICIAL';
+      }
       if (sprint?.hasOwnProperty('id_sprint')) {
         updateSprint(sprint.id_sprint, currentSprint);
       } else {
         createSprint(currentSprint);
       }
     } catch (error) {
-      console.log(error);
+      setErrorMessage(error);
     }
 
     setLoading(false);

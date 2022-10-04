@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { conn } from 'src/utils/database';
 import { isNilorEmpty } from 'src/helpers';
+import { verificarFechas } from '.';
 // eslint-disable-next-line import/no-anonymous-default-export
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const {
@@ -26,6 +27,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       try {
         const { nombre, fecha_inicio, fecha_fin, id_estado, id_backlog } = body;
         let values = [nombre, fecha_inicio, fecha_fin, id_estado, id_backlog, id];
+        /*Verificar fecha */
+        let verificar = await verificarFechas(fecha_inicio, fecha_fin, id_backlog, id);
+        if (verificar.rowCount > 0) {
+          return res
+            .status(400)
+            .json({ message: 'Ya existe sprint en este rango de fecha, por favor verifique y vuelva a intentar' });
+        }
         /*traer id de estado = En Curso */
         let query = `Select * from estados_sprint where estado = 'En Curso'`;
         let response = await conn.query(query);

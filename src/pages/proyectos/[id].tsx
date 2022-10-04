@@ -261,8 +261,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const historias = await res.json();
   res = await fetch(`http://localhost:3000/api/sprints?id_proyecto=${context.params.id}`);
   let sprints = await res.json();
-  console.log('SPRINTS: ', sprints);
-
   return {
     props: { historias, sprints },
   };

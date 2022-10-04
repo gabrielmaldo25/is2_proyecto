@@ -16,12 +16,20 @@ async function recuperarHistorias(id_sprint) {
   return response.rows;
 }
 
-async function verificarFechas(inicio, fin, backlog) {
-  let query = `select * from sprints
-  where fecha_inicio between $1 and $2
-  or fecha_fin between $1 and $2
-  and id_backlog = $3`;
-  let response = await conn.query(query, [inicio, fin, backlog]);
+export async function verificarFechas(inicio, fin, backlog, id) {
+  let values = [inicio, fin, backlog];
+  let query = `	select s.*, e.estado from sprints s
+  join estados_sprint e on e.id_estado = s.id_estado
+  where (fecha_inicio between $1 and $2
+  or fecha_fin between $1 and $2)
+  and id_backlog = $3
+  and estado != 'Cerrado'
+  `;
+  if (id) {
+    query += ` and id_sprint != $4`;
+    values.push(id);
+  }
+  let response = await conn.query(query, values);
   return response;
 }
 
@@ -125,7 +133,8 @@ export default async function (req, res) {
         on b.id_backlog = s.id_backlog
         join estados_sprint e 
         on e.id_estado = s.id_estado
-        where b.id_proyecto = $1`;
+        where b.id_proyecto = $1
+        order by 1`;
         response = await conn.query(query, [id_proyecto]);
         return res.json(response.rows);
       } catch (error) {
