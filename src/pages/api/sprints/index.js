@@ -16,6 +16,15 @@ async function recuperarHistorias(id_sprint) {
   return response.rows;
 }
 
+async function verificarFechas(inicio, fin, backlog) {
+  let query = `select * from sprints
+  where fecha_inicio between $1 and $2
+  or fecha_fin between $1 and $2
+  and id_backlog = $3`;
+  let response = await conn.query(query, [inicio, fin, backlog]);
+  return response;
+}
+
 let retornarBacklog = async (id_proyecto) => {
   let query = 'select id_backlog from backlogs where id_proyecto = $1';
   let res = await conn.query(query, [id_proyecto]);
@@ -126,6 +135,13 @@ export default async function (req, res) {
       try {
         const { nombre, fecha_inicio, fecha_fin, id_estado } = body;
         let values = [nombre, fecha_inicio, fecha_fin, id_estado, idBacklog];
+        /* Verificar si ya existe sprint con fechas a introducir*/
+        let verificar = await verificarFechas(fecha_inicio, fecha_fin, idBacklog);
+        if (verificar.rowCount > 0) {
+          return res
+            .status(400)
+            .json({ message: 'Ya existe sprint en este rango de fecha, por favor verifique y vuelva a intentar' });
+        }
         /*traer id de estado = En Curso */
         let query = `Select * from estados_sprint where estado = 'En Curso'`;
         let response = await conn.query(query);
