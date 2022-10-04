@@ -30,6 +30,7 @@ export interface Proyecto {
   nombre: string;
   descripcion?: any;
   participantes?: any;
+  abierto?: any;
 }
 
 export interface UserStory {

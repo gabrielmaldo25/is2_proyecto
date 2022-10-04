@@ -24,6 +24,7 @@ import {
 import { Rol } from "src/interfaces/interfaces";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+import useUser from "../../../lib/useUser";
 /* *** */
 
 interface TablePaginationActionsProps {
@@ -139,6 +140,12 @@ export default function IndexPermisos({ roles }: Props) {
   const refreshData = () => {
     router.replace(router.asPath);
   };
+
+  const { user, mutateUser } = useUser({
+    redirectTo: "/",
+    redirectIfFound: false,
+  });
+
   return (
     <Layout>
       <div>
@@ -147,6 +154,8 @@ export default function IndexPermisos({ roles }: Props) {
             <header className="bg-gray-900 space-y-4 p-4  sm:py-6 lg:py-4  xl:py-6">
               <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-bold text-white">Roles</h1>
+                {user?.seguridad ? (
+
                 <a
                   className="hover:bg-green-600 group flex items-center rounded-md bg-green-800 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
                   onClick={() => setOpen(true)}
@@ -162,6 +171,7 @@ export default function IndexPermisos({ roles }: Props) {
                   </svg>
                   Nuevo
                 </a>
+                ) : null} 
               </div>
               <form className="group relative">
                 <svg
@@ -211,7 +221,7 @@ export default function IndexPermisos({ roles }: Props) {
                       className="bg-gray-900 hover:bg-green-300 ring-1 ring-gray-900 "
                       onClick={() => {
                         setRol(row);
-                        setOpen(true);
+                        user?.seguridad? setOpen(true) : null;
                       }}
                     >
                       <TableCell

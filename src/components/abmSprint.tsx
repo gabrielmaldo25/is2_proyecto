@@ -56,21 +56,20 @@ export default function ABMSprint({
   setSprint,
   sprint = null,
   refetchSprints,
-  id_backlog,
+  id_proyecto,
 }: {
   open: any;
   setOpen: any;
   setSprint: any;
   sprint?: any;
   refetchSprints: any;
-  id_backlog: any;
+  id_proyecto: any;
 }) {
   const inititalState = {
     nombre: '',
-    fecha_inicio: null,
-    fecha_fin: null,
+    fecha_inicio: new Date().toISOString().slice(0, 10),
+    fecha_fin: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString().slice(0, 10),
     id_estado: null,
-    id_backlog: id_backlog,
   };
   const [currentSprint, setCurrentSprint] = useState<Sprint>(inititalState);
   const [loading, setLoading] = useState(false);
@@ -94,9 +93,15 @@ export default function ABMSprint({
   }, [estados]);
 
   useEffect(() => {
-    sprint !== null ? setCurrentSprint({ ...sprint }) : null;
+    if (sprint !== null) {
+      let inicio = new Date(sprint.fecha_inicio).toISOString().slice(0, 10);
+      let fin = new Date(sprint.fecha_fin).toISOString().slice(0, 10);
+      setCurrentSprint({ ...sprint, fecha_inicio: inicio, fecha_fin: fin });
+    }
   }, [sprint]);
-
+  useEffect(() => {
+    console.log('SPRINT CURRENT: ', currentSprint);
+  }, [currentSprint]);
   const handleClose = () => {
     sprint ? setSprint(null) : null;
     setOpen(false);
@@ -105,7 +110,7 @@ export default function ABMSprint({
   const createSprint = async (currentSprint: Sprint) => {
     let payload = { ...currentSprint };
     try {
-      await fetchJson('http://localhost:3000/api/sprints', {
+      await fetchJson(`http://localhost:3000/api/sprints?id_proyecto=${id_proyecto}`, {
         method: 'POST',
         body: JSON.stringify(payload),
         headers: {
@@ -170,14 +175,18 @@ export default function ABMSprint({
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+
     try {
+      if (currentSprint.fecha_inicio > currentSprint.fecha_fin) {
+        throw 'LA FECHA FIN NO PUEDE SER MENOR A LA INICIAL';
+      }
       if (sprint?.hasOwnProperty('id_sprint')) {
         updateSprint(sprint.id_sprint, currentSprint);
       } else {
         createSprint(currentSprint);
       }
     } catch (error) {
-      console.log(error);
+      setErrorMessage(error);
     }
 
     setLoading(false);

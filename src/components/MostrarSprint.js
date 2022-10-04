@@ -14,7 +14,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { isNilorEmpty } from 'src/helpers';
 import EditIcon from '@mui/icons-material/Edit';
 
-export default function MostrarSprint({ sprint, setSprint, setOpenSprint, historias }) {
+export default function MostrarSprint({ sprint, setSprint, setOpenSprint, historias, setUserStory, setOpenUS }) {
   return (
     <Accordion className="mt-4">
       <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
@@ -22,6 +22,11 @@ export default function MostrarSprint({ sprint, setSprint, setOpenSprint, histor
           <Typography>
             Sprint {sprint.id_sprint} {!isNilorEmpty(sprint.nombre) ? `: ${sprint.nombre} (${sprint.estado}) ` : null}
           </Typography>
+          {sprint.fecha_inicio && sprint.fecha_fin && (
+            <div className="text-zinc-400">
+              {new Date(sprint.fecha_inicio).toLocaleDateString()} - {new Date(sprint.fecha_fin).toLocaleDateString()}
+            </div>
+          )}
           {sprint.estado !== 'Cerrado' && (
             <EditIcon
               sx={{ color: 'black', '&:hover': { color: 'green' } }}
