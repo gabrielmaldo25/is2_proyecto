@@ -52,13 +52,27 @@ class KanbanBoard extends React.Component {
     this.setState({ draggedOverCol: stageValue });
   }
 
+  async updateUS(id, currentUS) {
+    let payload = { ...currentUS };
+
+    await fetch('http://localhost:3000/api/historias/' + id, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+
   //this is called when a Kanban card dropped over a column (called by card)
   handleOnDragEnd(e, user_story) {
     const updatedProjects = this.state.user_stories.slice(0);
     updatedProjects.find((projectObject) => {
-      console.log(projectObject.nombre + " linea 57")
       return projectObject.nombre === user_story.nombre;
     }).id_estado = this.state.draggedOverCol;
+    console.log(JSON.stringify(user_story) + "73");
+    console.log(user_story + "73");
+    this.updateUS(user_story.id_us, user_story);
     this.setState({ user_stories: updatedProjects });
   }
 
