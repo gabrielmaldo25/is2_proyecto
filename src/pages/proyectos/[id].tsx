@@ -23,7 +23,7 @@ import ABMSprint from 'src/components/abmSprint';
 import Kanban from './kanban';
 import MostrarSprint from 'src/components/MostrarSprint';
 import useUser from '../../../lib/useUser';
-
+import Chart from './chart';
 interface StyledTabProps {
   label: string;
   value: string;
@@ -228,7 +228,9 @@ export default function test({ historias, sprints }: Props) {
             <TabPanel value={'1'} style={{ flex: 1 }}>
               <Kanban id_sprint={1} />
             </TabPanel>
-            <TabPanel value={'2'}>Item Three</TabPanel>{' '}
+            <TabPanel value={'2'} style={{ flex: 1, height: '90vh', backgroundColor: 'white'}}>
+              <Chart />
+            </TabPanel>
           </div>
         </TabContext>
       </section>
