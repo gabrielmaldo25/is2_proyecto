@@ -4,10 +4,6 @@ import InitialIcon from 'src/components/iniciales';
 
 export default function Kanban(user_stories) {
 
-  // useEffect(() => {
-  //   console.log(JSON.stringify(user_stories) + "holaaaaaaaaaaaaaaaaaaaaaaa");
-  // }, [user_stories]);
-   
     const style = {
       paddingTop: '25px',
       height: '400px',
@@ -83,7 +79,6 @@ class KanbanBoard extends React.Component {
     if (this.state.isLoading) {
       return <h3>Loading...</h3>;
     }
-    // console.log(JSON.stringify(this.props.user_stories.user_stories) + "KanbanBoard");
     return (
       <div>
         {this.columns.map((column) => {
@@ -174,10 +169,6 @@ class KanbanCard extends React.Component {
 
 
   render() {
-
-    const usuarios = JSON.stringify(this.props.user_story.usuario);
-
-    console.log(usuarios, " 182");
 
     const cardStyle = {
       backgroundColor: '#FFFFFF',
