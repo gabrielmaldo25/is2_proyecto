@@ -12,17 +12,16 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         /* let query = `select us.* from user_stories us
         join usuarios_proyectos up on us.id_proyecto = up.id_proyecto 
         where us.id_proyecto = $1`; */
-        let query = `select us.*,e.estado estado, row_to_json(u)::jsonb - 'password' usuario 
+        let query = `select us.*, e.estado estado, row_to_json(u)::jsonb - 'password' usuario 
         from user_stories us
-        left join usuarios_proyectos up 
-        on us.id_user = up.id_user
         left join usuarios u
-        on u.id_user = up.id_user
-        join estados_us e 
+        on u.id_user = us.id_user
+        left join estados_us e 
         on e.id_estado = us.id_estado
         where us.id_proyecto = $1`;
         let values = [id_proyecto];
         let response = await conn.query(query, values);
+        console.log(response.rows, "holaa");
         return res.json(response.rows);
       } catch (error: any) {
         return res.status(400).json({ message: error.message });
