@@ -203,7 +203,7 @@ class KanbanCard extends React.Component {
           <div style={{textAlign: 'start', margin: '5px',fontSize: '13px'}}>
             {/* <br /> */}
             <h4><strong>Descripción: </strong>
-            {this.props.user_story.descripcion}
+            {this.props.user_story.descripcion ? this.props.user_story.descripcion  : ""}
             <br />
             </h4>
           </div>
