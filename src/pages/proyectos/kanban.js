@@ -1,6 +1,6 @@
 import { borderRadius, margin } from '@mui/system';
 import React, {useEffect, useState} from 'react';
-
+import InitialIcon from 'src/components/iniciales';
 
 export default function Kanban(user_stories) {
 
@@ -16,7 +16,6 @@ export default function Kanban(user_stories) {
 
     return (
       <div style={style}>
-        {/* <h1>Project Kanban Board</h1> */}
         <KanbanBoard user_stories={user_stories}/>
       </div>
     );
@@ -173,16 +172,19 @@ class KanbanCard extends React.Component {
     };
   }
 
+
   render() {
+
+    const usuarios = JSON.stringify(this.props.user_story.usuario);
+
+    console.log(usuarios, " 182");
+
     const cardStyle = {
-      // backgroundColor: '#f9f7f7',
       backgroundColor: '#FFFFFF',
       paddingLeft: '0px',
       paddingTop: '5px',
       paddingBottom: '5px',
-      // marginLeft: '0px',
       margin: '5px',
-      // marginBottom: '5px',
       width: '260px',
       borderRadius: '7px',
 
@@ -208,6 +210,14 @@ class KanbanCard extends React.Component {
             </h4>
           </div>
         )}
+        <div className="flex justify-end sm:mr-4 lg:mt-0 ">
+            <>
+              <dt ></dt>
+                  <dd className="flex justify-end sm:justify-start lg:justify-end xl:justify-start -space-x-1.5">
+                    <InitialIcon initials={this.props.user_story.usuario.name} />
+                  </dd>
+            </>
+        </div>
         <div
           style={{ width: '100%' }}
           onClick={(e) => {
@@ -220,45 +230,4 @@ class KanbanCard extends React.Component {
     );
   }
 }
-
-/*
- * Projects to be displayed on Kanban Board
- */
-let projectList = [
-  {
-    name: 'Project 1',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam posuere dui vel urna egestas rutrum. ',
-    project_stage: 1,
-  },
-  {
-    name: 'Project 2',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam posuere dui vel urna egestas rutrum. ',
-    project_stage: 1,
-  },
-  {
-    name: 'Project 3',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam posuere dui vel urna egestas rutrum. ',
-    project_stage: 1,
-  },
-  {
-    name: 'Project 4',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam posuere dui vel urna egestas rutrum. ',
-    project_stage: 2,
-  },
-  {
-    name: 'Project 5',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam posuere dui vel urna egestas rutrum. ',
-    project_stage: 3,
-  },
-  {
-    name: 'Project 6',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam posuere dui vel urna egestas rutrum. ',
-    project_stage: 3,
-  },
-  {
-    name: 'Project 7',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam posuere dui vel urna egestas rutrum. ',
-    project_stage: 4,
-  },
-];
 
