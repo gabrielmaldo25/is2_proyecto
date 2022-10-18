@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from 'react';
 import Layout from 'src/components/layout';
 import { useRouter } from 'next/router';
@@ -100,6 +101,10 @@ export default function test({ historias, sprints }: Props) {
   const refetchUStories = () => {
     router.replace(router.asPath);
   };
+
+  const started_sprint = sprints.filter((sprint) => sprint.estado == 'En Curso').map((sprint) => ( sprint.id_sprint));
+  // console.log(started_sprint + " started sprint ")
+  // console.log(JSON.stringify(historias.filter((story) => story.id_sprint == started_sprint)) + "encontro")
 
   const { user, mutateUser } = useUser({
     redirectTo: '/',
@@ -220,13 +225,32 @@ export default function test({ historias, sprints }: Props) {
                             </a>
                           </li>
                         ))}
+                      <li className="flex">
+                        <a
+                          // href="/historias"
+                          onClick={() => setOpenUS(true)}
+                          className="hover:border-green-600 hover:border-solid hover:bg-white hover:text-green-600 group w-full flex flex-col items-center justify-center rounded-md border-2 border-dashed border-slate-300 text-sm leading-6 text-slate-900 font-medium py-3"
+                        >
+                          <svg
+                            className="group-hover:text-green-600 mb-1 text-slate-400"
+                            width="20"
+                            height="20"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path d="M10 5a1 1 0 0 1 1 1v3h3a1 1 0 1 1 0 2h-3v3a1 1 0 1 1-2 0v-3H6a1 1 0 1 1 0-2h3V6a1 1 0 0 1 1-1Z" />
+                          </svg>
+                          Agregar historia
+                        </a>
+                      </li>
                     </ul>
                   </AccordionDetails>
                 </Accordion>
               </div>
             </TabPanel>
             <TabPanel value={'1'} style={{ flex: 1 }}>
-              <Kanban id_sprint={1} />
+              <Kanban
+               user_stories={historias.filter((story) => story.id_sprint == started_sprint)} />
             </TabPanel>
             <TabPanel value={'2'}>Item Three</TabPanel>{' '}
           </div>

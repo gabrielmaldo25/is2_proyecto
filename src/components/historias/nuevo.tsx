@@ -127,6 +127,7 @@ export default function NuevoUS({
     userStory ? setUserStory(null) : null;
     setOpen(false);
   };
+
   const createUS = async (currentUS: UserStory) => {
     let payload = { ...currentUS };
     await fetch('http://localhost:3000/api/historias', {
@@ -137,6 +138,7 @@ export default function NuevoUS({
       },
     });
   };
+  
   const updateUS = async (id: any, currentUS: UserStory) => {
     let payload = { ...currentUS };
 
