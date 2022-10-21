@@ -228,8 +228,8 @@ export default function test({ historias, sprints }: Props) {
             <TabPanel value={'1'} style={{ flex: 1 }}>
               <Kanban id_sprint={1} />
             </TabPanel>
-            <TabPanel value={'2'} style={{ flex: 1, height: '90vh', backgroundColor: 'white'}}>
-              <Chart />
+            <TabPanel value={'2'} style={{ flex: 1, height: '90vh', backgroundColor: 'white' }}>
+              <Chart idProyecto={router.query.id} />
             </TabPanel>
           </div>
         </TabContext>
