@@ -24,7 +24,7 @@ import ABMSprint from 'src/components/abmSprint';
 import Kanban from './kanban';
 import MostrarSprint from 'src/components/MostrarSprint';
 import useUser from '../../../lib/useUser';
-
+import Chart from './chart';
 interface StyledTabProps {
   label: string;
   value: string;
@@ -252,7 +252,9 @@ export default function test({ historias, sprints }: Props) {
               <Kanban
                user_stories={historias.filter((story) => story.id_sprint == started_sprint)} />
             </TabPanel>
-            <TabPanel value={'2'}>Item Three</TabPanel>{' '}
+            <TabPanel value={'2'} style={{ flex: 1, height: '90vh', backgroundColor: 'white' }}>
+              <Chart idProyecto={router.query.id} />
+            </TabPanel>
           </div>
         </TabContext>
       </section>
