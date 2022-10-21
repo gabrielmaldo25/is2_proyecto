@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from 'react';
 import Layout from 'src/components/layout';
 import { useRouter } from 'next/router';
@@ -17,10 +18,12 @@ import {
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import NuevoUS from 'src/components/historias/nuevo';
-import { UserStory } from 'src/interfaces/interfaces';
+import { UserStory, Sprint } from 'src/interfaces/interfaces';
 import { GetServerSideProps } from 'next';
-import useUser from "../../../lib/useUser";
-
+import ABMSprint from 'src/components/abmSprint';
+import Kanban from './kanban';
+import MostrarSprint from 'src/components/MostrarSprint';
+import useUser from '../../../lib/useUser';
 
 interface StyledTabProps {
   label: string;
@@ -42,13 +45,18 @@ const StyledTab = styled((props: StyledTabProps) => <Tab disableRipple {...props
 
 interface Props {
   historias: UserStory[];
+  sprints: Sprint[];
 }
 
-export default function test({ historias }: Props) {
+export default function test({ historias, sprints }: Props) {
+  console.log('HISTORIAS', historias);
+
   const router = useRouter();
   const [proyecto, setProyecto] = useState<any>({});
   const [openUS, setOpenUS] = useState<any>(false);
   const [userStory, setUserStory] = useState<any>(null);
+  const [openSprint, setOpenSprint] = useState<any>(false);
+  const [sprint, setSprint] = useState<any>(null);
 
   /*Del boton nuevo */
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -61,7 +69,7 @@ export default function test({ historias }: Props) {
   };
   /****/
   const loadProject = async (id: string) => {
-    const res = await fetch('http://localhost:3000/api/proyectos/' + id);
+    let res = await fetch('http://localhost:3000/api/proyectos/' + id);
     const project = await res.json();
     setProyecto(project);
   };
@@ -94,8 +102,12 @@ export default function test({ historias }: Props) {
     router.replace(router.asPath);
   };
 
+  const started_sprint = sprints.filter((sprint) => sprint.estado == 'En Curso').map((sprint) => ( sprint.id_sprint));
+  // console.log(started_sprint + " started sprint ")
+  // console.log(JSON.stringify(historias.filter((story) => story.id_sprint == started_sprint)) + "encontro")
+
   const { user, mutateUser } = useUser({
-    redirectTo: "/",
+    redirectTo: '/',
     redirectIfFound: false,
   });
 
@@ -105,18 +117,20 @@ export default function test({ historias }: Props) {
       <section className="flex flex-col min-h-full">
         <header className="bg-gray-900 space-y-4 p-4 sm:px-8 sm:py-6 lg:p-4 xl:px-8 xl:py-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-white">{proyecto.nombre} </h1>
+            <h1 className="text-3xl font-bold text-white">
+              {proyecto.nombre} <h1 className="text-3xl font-bold text-red-600">{!proyecto.abierto && 'COMPLETADO'}</h1>
+            </h1>
             {user?.proyectos ? (
-            <a
-              onClick={handleClick}
-              className="hover:bg-green-400 group flex items-center rounded-md bg-green-600 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
-            >
-              <svg width="20" height="20" fill="currentColor" className="mr-2" aria-hidden="true">
-                <path d="M10 5a1 1 0 0 1 1 1v3h3a1 1 0 1 1 0 2h-3v3a1 1 0 1 1-2 0v-3H6a1 1 0 1 1 0-2h3V6a1 1 0 0 1 1-1Z" />
-              </svg>
-              Nuevo
-            </a>
-            ) : null} 
+              <a
+                onClick={handleClick}
+                className="hover:bg-green-400 group flex items-center rounded-md bg-green-600 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
+              >
+                <svg width="20" height="20" fill="currentColor" className="mr-2" aria-hidden="true">
+                  <path d="M10 5a1 1 0 0 1 1 1v3h3a1 1 0 1 1 0 2h-3v3a1 1 0 1 1-2 0v-3H6a1 1 0 1 1 0-2h3V6a1 1 0 0 1 1-1Z" />
+                </svg>
+                Nuevo
+              </a>
+            ) : null}
           </div>
           <Menu
             id="basic-menu"
@@ -128,7 +142,7 @@ export default function test({ historias }: Props) {
             }}
           >
             <MenuItem onClick={() => setOpenUS(true)}>Historia de Usuario</MenuItem>
-            <MenuItem onClick={handleClose}>Sprint</MenuItem>
+            <MenuItem onClick={() => setOpenSprint(true)}>Sprint</MenuItem>
           </Menu>
         </header>
 
@@ -146,61 +160,75 @@ export default function test({ historias }: Props) {
               <StyledTab label="Burndown Chart" value={'2'} />
             </TabList>
           </Box>
-          <div className="bg-white p-4 sm:px-8 sm:pt-6 sm:pb-8 lg:p-4 xl:px-8 xl:pt-6 xl:pb-8  text-sm leading-6 relative flex flex-grow ">
+          <div className="bg-green-400 text-sm leading-6 relative flex flex-grow ">
             <TabPanel value={'0'} style={{ flex: 1 }}>
               <div>
-                <Accordion>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                    <Typography>Sprint en curso</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>US en del sprint en curso</AccordionDetails>
-                </Accordion>
-                <Accordion>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2a-content" id="panel2a-header">
-                    <Typography>Sprint en cola</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <Typography>Los us de un sprint por comenzar.</Typography>
-                  </AccordionDetails>
-                </Accordion>
+                {sprints
+                  .filter((sprint) => sprint.estado == 'En Curso')
+                  .map((sprint) => (
+                    <MostrarSprint
+                      sprint={sprint}
+                      setOpenSprint={setOpenSprint}
+                      setSprint={setSprint}
+                      historias={historias}
+                      setUserStory={setUserStory}
+                      setOpenUS={setOpenUS}
+                    />
+                  ))}
+                {sprints
+                  .filter((sprint) => sprint.estado != 'En Curso')
+                  .map((sprint) => (
+                    <MostrarSprint
+                      sprint={sprint}
+                      setOpenSprint={setOpenSprint}
+                      setSprint={setSprint}
+                      historias={historias}
+                    />
+                  ))}
+              </div>
+              <div className="pt-4">
                 <Accordion>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel3a-content" id="panel3a-header">
                     <Typography>Backlog</Typography>
                   </AccordionSummary>
                   <AccordionDetails>
                     <ul className=" grid grid-cols-1 gap-4 text-sm ">
-                      {historias.map((story: any) => (
-                        <li>
-                          <a
-                            onClick={() => {
-                              setUserStory(story);
-                              setOpenUS(true);
-                            }}
-                            className="hover:bg-green-600 hover:ring-green-400 hover:shadow-md group rounded-md p-1 bg-green-300 ring-1 ring-slate-200 shadow-sm flex"
-                          >
-                            <div className="grid sm:block lg:grid xl:block items-center">
-                              <div className="flex flex-col text-slate-900 group-hover:text-white">
-                                <div>
-                                  <dt className="sr-only">Title</dt>
-                                  <dd className=" font-semibold ">{story.nombre}</dd>
+                      {historias
+                        .filter((story) => isNilorEmpty(story.id_sprint))
+                        .map((story: any) => (
+                          <li>
+                            <a
+                              onClick={() => {
+                                setUserStory(story);
+                                setOpenUS(true);
+                              }}
+                              className="hover:bg-green-600 hover:ring-green-400 hover:shadow-md group rounded-md p-1 bg-green-300 ring-1 ring-slate-200 shadow-sm flex"
+                            >
+                              <div className="grid sm:block lg:grid xl:block items-center">
+                                <div className="flex flex-col text-slate-900 group-hover:text-white">
+                                  <div>
+                                    <dt className="sr-only">Title</dt>
+                                    <dd className=" font-semibold ">{story.nombre}</dd>
+                                  </div>
+                                  <div>
+                                    <dt className="sr-only">Category</dt>
+                                    <dd className="">{story.descripcion}</dd>
+                                  </div>
                                 </div>
                                 <div>
                                   <dt className="sr-only">Category</dt>
-                                  <dd className="">{story.descripcion}</dd>
+                                  <dd className="">
+                                    {story.estado} | {story.usuario?.name || 'SIN ASIGNAR'}{' '}
+                                  </dd>
                                 </div>
                               </div>
-                              <div>
-                                <dt className="sr-only">Category</dt>
-                                <dd className=""> ESTADO | ASIGNADO A QUIEN </dd>
-                              </div>
-                            </div>
-                          </a>
-                        </li>
-                      ))}
-
+                            </a>
+                          </li>
+                        ))}
                       <li className="flex">
                         <a
-                          href="/new"
+                          // href="/historias"
+                          onClick={() => setOpenUS(true)}
                           className="hover:border-green-600 hover:border-solid hover:bg-white hover:text-green-600 group w-full flex flex-col items-center justify-center rounded-md border-2 border-dashed border-slate-300 text-sm leading-6 text-slate-900 font-medium py-3"
                         >
                           <svg
@@ -220,7 +248,10 @@ export default function test({ historias }: Props) {
                 </Accordion>
               </div>
             </TabPanel>
-            <TabPanel value={'1'}>Item Two</TabPanel>
+            <TabPanel value={'1'} style={{ flex: 1 }}>
+              <Kanban
+               user_stories={historias.filter((story) => story.id_sprint == started_sprint)} />
+            </TabPanel>
             <TabPanel value={'2'}>Item Three</TabPanel>{' '}
           </div>
         </TabContext>
@@ -235,15 +266,26 @@ export default function test({ historias }: Props) {
           refetchUStories={refetchUStories}
         />
       )}
+      {openSprint && (
+        <ABMSprint
+          open={openSprint}
+          setOpen={setOpenSprint}
+          id_proyecto={router.query.id}
+          sprint={sprint}
+          setSprint={setSprint}
+          refetchSprints={refetchUStories}
+        />
+      )}
     </Layout>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const res = await fetch(`http://localhost:3000/api/historias?id_proyecto=${context.params.id}`);
+  let res = await fetch(`http://localhost:3000/api/historias?id_proyecto=${context.params.id}`);
   const historias = await res.json();
-  console.log('HISTORIAS: ', historias);
+  res = await fetch(`http://localhost:3000/api/sprints?id_proyecto=${context.params.id}`);
+  let sprints = await res.json();
   return {
-    props: { historias },
+    props: { historias, sprints },
   };
 };

@@ -4,7 +4,7 @@ import Nuevo from './nuevo';
 import { useRouter } from 'next/router';
 import EditIcon from '@mui/icons-material/Edit';
 import InitialIcon from 'src/components/iniciales';
-import useUser from "../../../lib/useUser";
+import useUser from '../../../lib/useUser';
 
 export default function test() {
   const [proyectos, setProyectos] = useState<any>([]);
@@ -20,7 +20,7 @@ export default function test() {
   };
 
   const { user, mutateUser } = useUser({
-    redirectTo: "/",
+    redirectTo: '/',
     redirectIfFound: false,
   });
 
@@ -37,16 +37,16 @@ export default function test() {
               <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-bold text-white">Proyectos</h1>
                 {user?.proyectos ? (
-                <a
-                  onClick={() => setOpen(true)}
-                  className="hover:bg-green-400 group flex items-center rounded-md bg-green-600 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
-                >
-                  <svg width="20" height="20" fill="currentColor" className="mr-2" aria-hidden="true">
-                    <path d="M10 5a1 1 0 0 1 1 1v3h3a1 1 0 1 1 0 2h-3v3a1 1 0 1 1-2 0v-3H6a1 1 0 1 1 0-2h3V6a1 1 0 0 1 1-1Z" />
-                  </svg>
-                  Nuevo
-                </a>
-                ) : null} 
+                  <a
+                    onClick={() => setOpen(true)}
+                    className="hover:bg-green-400 group flex items-center rounded-md bg-green-600 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
+                  >
+                    <svg width="20" height="20" fill="currentColor" className="mr-2" aria-hidden="true">
+                      <path d="M10 5a1 1 0 0 1 1 1v3h3a1 1 0 1 1 0 2h-3v3a1 1 0 1 1-2 0v-3H6a1 1 0 1 1 0-2h3V6a1 1 0 0 1 1-1Z" />
+                    </svg>
+                    Nuevo
+                  </a>
+                ) : null}
               </div>
               <form className="group relative">
                 <svg
@@ -57,7 +57,7 @@ export default function test() {
                   aria-hidden="true"
                 >
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     clip-rule="evenodd"
                     d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                   />
@@ -107,39 +107,40 @@ export default function test() {
                         </div>
                       </div>
                       <div>
-                      {user?.proyectos ? (
-                        <EditIcon
-                          sx={{ color: 'white', '&:hover': { color: 'black' } }}
-                          onClick={() => {
-                            setProject(project);
-                            setOpen(true);
-                          }}
-                        />
-                        ) : null} 
+                        {user?.proyectos && project.abierto ? (
+                          <EditIcon
+                            sx={{ color: 'white', '&:hover': { color: 'black' } }}
+                            onClick={() => {
+                              setProject(project);
+                              setOpen(true);
+                            }}
+                          />
+                        ) : null}
 
+                        {!project.abierto && <div className="font-bold text-lg text-red-600">COMPLETADO</div>}
                       </div>
                     </a>
                   </li>
                 ))}
 
                 <li className="flex">
-                {user?.proyectos ? (
-                  <a
-                    onClick={() => setOpen(true)}
-                    className="hover:border-green-600 hover:border-solid hover:bg-white hover:text-green-600 group w-full flex flex-col items-center justify-center rounded-md border-2 border-dashed border-slate-300 text-sm leading-6 text-slate-900 font-medium py-3"
-                  >
-                    <svg
-                      className="group-hover:text-green-600 mb-1 text-slate-400"
-                      width="20"
-                      height="20"
-                      fill="currentColor"
-                      aria-hidden="true"
+                  {user?.proyectos ? (
+                    <a
+                      onClick={() => setOpen(true)}
+                      className="hover:border-green-600 hover:border-solid hover:bg-white hover:text-green-600 group w-full flex flex-col items-center justify-center rounded-md border-2 border-dashed border-slate-300 text-sm leading-6 text-slate-900 font-medium py-3"
                     >
-                      <path d="M10 5a1 1 0 0 1 1 1v3h3a1 1 0 1 1 0 2h-3v3a1 1 0 1 1-2 0v-3H6a1 1 0 1 1 0-2h3V6a1 1 0 0 1 1-1Z" />
-                    </svg>
-                    Nuevo Proyecto
-                  </a>
-                  ) : null} 
+                      <svg
+                        className="group-hover:text-green-600 mb-1 text-slate-400"
+                        width="20"
+                        height="20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path d="M10 5a1 1 0 0 1 1 1v3h3a1 1 0 1 1 0 2h-3v3a1 1 0 1 1-2 0v-3H6a1 1 0 1 1 0-2h3V6a1 1 0 0 1 1-1Z" />
+                      </svg>
+                      Nuevo Proyecto
+                    </a>
+                  ) : null}
                 </li>
               </>
             </ul>

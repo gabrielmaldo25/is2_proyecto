@@ -24,6 +24,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     case 'PUT':
       try {
+        console.log('PUT US:', body);
         const { nombre, descripcion, id_estado, id_proyecto, id_user, id_sprint } = body;
         let values = [
           nombre,

@@ -30,6 +30,7 @@ export interface Proyecto {
   nombre: string;
   descripcion?: any;
   participantes?: any;
+  abierto?: any;
 }
 
 export interface UserStory {
@@ -40,4 +41,16 @@ export interface UserStory {
   id_user?: any;
   id_proyecto: any;
   descripcion?: any;
+  usuario?: any;
+  estado: any;
+}
+
+export interface Sprint {
+  id_sprint?: any;
+  nombre: any;
+  fecha_inicio: any;
+  fecha_fin: any;
+  id_estado: any;
+  id_backlog: any;
+  estado: any;
 }

@@ -9,17 +9,39 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   switch (method) {
     case 'GET':
       try {
-        let query = `select pr.*, json_agg(row_to_json(u)::jsonb - 'password') filter (where u.id_user is not null) participantes
+        //cerrar proyecto si ya no tiene sprint pendientes
+        let response = null;
+        let query2 = `select * from backlogs`;
+        let backlogs = await conn.query(query2);
+        if (backlogs.rowCount > 0) {
+          backlogs.rows.map(async (backlog: any) => {
+            let queryAux = `select * from sprints where id_backlog = $1`;
+            let response1 = await conn.query(queryAux, [backlog.id_backlog]);
+            query2 = `select e.estado from sprints s
+            join estados_sprint e on e.id_estado = s.id_estado
+            join backlogs b on b.id_backlog = s.id_backlog
+            where s.id_backlog =$1
+            and estado != 'Cerrado'`;
+            response = await conn.query(query2, [backlog.id_backlog]);
+            if (response1.rowCount > 0 && response.rowCount == 0) {
+              query2 = `update proyectos set abierto = false where id_proyecto = $1`;
+              response = await conn.query(query2, [backlog.id_proyecto]);
+            }
+          });
+        }
+
+        let query = `select pr.*, b.id_backlog, json_agg(row_to_json(u)::jsonb - 'password') filter (where u.id_user is not null) participantes
         from proyectos pr
         left join usuarios_proyectos up
         on pr.id_proyecto = up.id_proyecto
         left join usuarios u 
         on u.id_user = up.id_user
-        group by pr.id_proyecto
-        order by 1 asc
-            `;
+        join backlogs b 
+        on b.id_proyecto = pr.id_proyecto
+        group by pr.id_proyecto, b.id_backlog
+        order by 1 asc`;
         //const query = `select * from proyectos`;
-        const response = await conn.query(query);
+        response = await conn.query(query);
         return res.json(response.rows);
       } catch (error: any) {
         return res.status(400).json({ message: error.message });
@@ -56,7 +78,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
 
         return res.json(response.rows[0]);
       } catch (error: any) {
-        console.log('ERROR: ', error);
         return res.status(400).json({ message: error.message || error.error });
       }
     default:

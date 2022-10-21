@@ -79,10 +79,15 @@ export default function NuevoUS({
   const [usuarios, setUsuarios] = useState([]);
   const [estados, setEstados] = useState<any>();
   const [errorMessage, setErrorMessage] = useState<any>(null);
+  const [sprints, setSprints] = useState([]);
+  const [selectedSprint, setSelectedSprint] = React.useState<any>();
 
   useEffect(() => {
     if (userStory && userStory.id_user) {
       setSelectedUsuario(userStory.id_user);
+    }
+    if (userStory && userStory.id_sprint) {
+      setSelectedSprint(userStory.id_sprint);
     }
   }, [userStory]);
   useEffect(() => {
@@ -92,7 +97,12 @@ export default function NuevoUS({
       .then((data) => {
         setUsuarios(data);
       });
-    fetch('/api/extra/estados')
+    fetch(`/api/sprints?id_proyecto=${id_proyecto}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setSprints(data);
+      });
+    fetch('/api/extra/estados_us')
       .then((res) => res.json())
       .then((data) => {
         setEstados(data);
@@ -117,6 +127,7 @@ export default function NuevoUS({
     userStory ? setUserStory(null) : null;
     setOpen(false);
   };
+
   const createUS = async (currentUS: UserStory) => {
     let payload = { ...currentUS };
     await fetch('http://localhost:3000/api/historias', {
@@ -127,6 +138,7 @@ export default function NuevoUS({
       },
     });
   };
+  
   const updateUS = async (id: any, currentUS: UserStory) => {
     let payload = { ...currentUS };
 
@@ -228,15 +240,15 @@ export default function NuevoUS({
             <div className="flex flex-col">
               <text className="text-lg">Sprint?</text>
               <Select
-                value={selectedUsuario}
-                onChange={(e: any) => setSelectedUsuario(e.target.value)}
+                value={selectedSprint}
+                onChange={(e: any) => setCurrentUS({ ...currentUS, id_sprint: e.target.value })}
                 input={<OutlinedInput label="Tag" />}
                 MenuProps={MenuProps}
               >
-                {!isNilorEmpty(usuarios) &&
-                  usuarios.map((user: any) => (
-                    <MenuItem key={user.id_user} value={user.id_user}>
-                      <ListItemText primary={user.name} />
+                {!isNilorEmpty(sprints) &&
+                  sprints.map((sprint: any) => (
+                    <MenuItem key={sprint.id_sprint} value={sprint.id_sprint}>
+                      <ListItemText primary={sprint.nombre} />
                     </MenuItem>
                   ))}
               </Select>

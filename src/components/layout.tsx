@@ -78,7 +78,6 @@ export default function Layout({ children }: any) {
                   <div className="flex items-center">
                     <div className="hidden md:block">
                       <div className=" flex items-baseline space-x-4">
-                        {/* {user?.proyectos ? ( */}
                           <a
                             key={navigation[0].name}
                             href={navigation[0].href}
@@ -91,8 +90,6 @@ export default function Layout({ children }: any) {
                           >
                             {navigation[0].name}
                           </a>
-                        {/* ) : null} */}
-                        {/* {user?.usuarios ? ( */}
                           <a
                             key={navigation[1].name}
                             href={navigation[1].href}
@@ -105,19 +102,16 @@ export default function Layout({ children }: any) {
                           >
                             {navigation[1].name}
                           </a>
-                        {/* ) : null} */}
-                        {/* {user?.seguridad ? ( */}
                           <a
                             key={'seguridad'}
                             className={classNames(
                               ' hover:bg-green-400 text-white',
                               'px-3 py-2 rounded-md text-sm font-medium',
                             )}
-                            onClick={handleClick}
+                            onClick={() => handleClick}
                           >
                             Seguridad
                           </a>
-                        {/* ) : null} */}
                         <Menu2
                           id="basic-menu"
                           anchorEl={anchorEl}
@@ -288,8 +282,6 @@ export default function Layout({ children }: any) {
                       >
                         {item.name}
                       </Disclosure.Button>
-                      //   ))}
-                      // </div>
                     ))}
                   </div>
                 </div>
@@ -297,7 +289,7 @@ export default function Layout({ children }: any) {
             </>
           )}
         </Disclosure>
-        <div className="bg-black h-screen">
+        <div className="bg-black flex-1">
           <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 bg-black flex-1">{children}</main>
         </div>
       </div>
