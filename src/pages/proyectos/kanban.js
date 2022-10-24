@@ -167,7 +167,6 @@ class KanbanCard extends React.Component {
     };
   }
 
-
   render() {
 
     const cardStyle = {
@@ -201,6 +200,7 @@ class KanbanCard extends React.Component {
             </h4>
           </div>
         )}
+      {this.props.user_story.usuario?  (
         <div className="flex justify-end sm:mr-4 lg:mt-0 ">
             <>
               <dt ></dt>
@@ -209,6 +209,7 @@ class KanbanCard extends React.Component {
                   </dd>
             </>
         </div>
+      ) : null }
         <div
           style={{ width: '100%' }}
           onClick={(e) => {
