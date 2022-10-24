@@ -21,7 +21,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         where us.id_proyecto = $1`;
         let values = [id_proyecto];
         let response = await conn.query(query, values);
-        console.log(response.rows, "holaa");
         return res.json(response.rows);
       } catch (error: any) {
         return res.status(400).json({ message: error.message });
