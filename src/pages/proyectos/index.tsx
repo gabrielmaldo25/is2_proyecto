@@ -19,6 +19,10 @@ export default function test() {
       });
   };
 
+  useEffect(() => {
+    console.log('PROYECTOS: ', proyectos);
+  }, [proyectos]);
+  
   const { user, mutateUser } = useUser({
     redirectTo: '/',
     redirectIfFound: false,
