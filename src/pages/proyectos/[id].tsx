@@ -102,7 +102,7 @@ export default function test({ historias, sprints }: Props) {
     router.replace(router.asPath);
   };
 
-  const started_sprint = sprints.filter((sprint) => sprint.estado == 'En Curso').map((sprint) => ( sprint.id_sprint));
+  const started_sprint = sprints.filter((sprint) => sprint.estado == 'En Curso').map((sprint) => sprint.id_sprint);
   // console.log(started_sprint + " started sprint ")
   // console.log(JSON.stringify(historias.filter((story) => story.id_sprint == started_sprint)) + "encontro")
 
@@ -111,16 +111,16 @@ export default function test({ historias, sprints }: Props) {
     redirectIfFound: false,
   });
 
-  if (isNilorEmpty(proyecto)) return <text>No hay nada</text>;
   return (
     <Layout>
       <section className="flex flex-col min-h-full">
         <header className="bg-gray-900 space-y-4 p-4 sm:px-8 sm:py-6 lg:p-4 xl:px-8 xl:py-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-white">
-              {proyecto.nombre} <h1 className="text-3xl font-bold text-red-600">{!proyecto.abierto && 'COMPLETADO'}</h1>
-            </h1>
-            {user?.proyectos && proyecto.abierto? (
+            <div>
+              <h1 className="text-3xl font-bold text-white">{proyecto.nombre}</h1>
+              {proyecto?.abierto == false && <h1 className="text-3xl font-bold text-red-600">COMPLETADO</h1>}
+            </div>
+            {user?.proyectos && proyecto.abierto ? (
               <a
                 onClick={handleClick}
                 className="hover:bg-green-400 group flex items-center rounded-md bg-green-600 text-white text-sm font-medium pl-2 pr-3 py-2 shadow-sm"
@@ -249,8 +249,7 @@ export default function test({ historias, sprints }: Props) {
               </div>
             </TabPanel>
             <TabPanel value={'1'} style={{ flex: 1 }}>
-              <Kanban
-               user_stories={historias.filter((story) => story.id_sprint == started_sprint)} />
+              <Kanban user_stories={historias.filter((story) => story.id_sprint == started_sprint)} />
             </TabPanel>
             <TabPanel value={'2'} style={{ flex: 1, height: '90vh', backgroundColor: 'white' }}>
               <Chart idProyecto={router.query.id} />

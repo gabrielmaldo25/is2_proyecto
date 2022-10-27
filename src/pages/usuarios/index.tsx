@@ -135,7 +135,7 @@ export default function indexUsers({ usuarios }: Props) {
                 </a>
               ) : null} 
               </div>
-              <form className="group relative">
+              {/* <form className="group relative">
                 <svg
                   width="20"
                   height="20"
@@ -155,7 +155,7 @@ export default function indexUsers({ usuarios }: Props) {
                   aria-label="Buscar Usuarios"
                   placeholder="Buscar Usuarios..."
                 />
-              </form>
+              </form> */}
             </header>
 
             <TableContainer component={Paper}>
