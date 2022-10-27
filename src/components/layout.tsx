@@ -76,40 +76,40 @@ export default function Layout({ children }: any) {
                   <div className="flex items-center">
                     <div className="hidden md:block">
                       <div className=" flex items-baseline space-x-4">
-                        <a
-                          key={navigation[0].name}
-                          href={navigation[0].href}
-                          className={classNames(
-                            navigation[0].href.toLowerCase() == router.pathname
-                              ? 'bg-green-600 text-white'
-                              : ' hover:bg-green-400 text-white',
-                            'px-3 py-2 rounded-md text-sm font-medium',
-                          )}
-                        >
-                          {navigation[0].name}
-                        </a>
-                        <a
-                          key={navigation[1].name}
-                          href={navigation[1].href}
-                          className={classNames(
-                            navigation[1].href.toLowerCase() == router.pathname
-                              ? 'bg-green-600 text-white'
-                              : ' hover:bg-green-400 text-white',
-                            'px-3 py-2 rounded-md text-sm font-medium',
-                          )}
-                        >
-                          {navigation[1].name}
-                        </a>
-                        <a
-                          key={'seguridad'}
-                          className={classNames(
-                            ' hover:bg-green-400 text-white',
-                            'px-3 py-2 rounded-md text-sm font-medium',
-                          )}
-                          onClick={() => handleClick}
-                        >
-                          Seguridad
-                        </a>
+                          <a
+                            key={navigation[0].name}
+                            href={navigation[0].href}
+                            className={classNames(
+                              navigation[0].href.toLowerCase() == router.pathname
+                                ? 'bg-green-600 text-white'
+                                : ' hover:bg-green-400 text-white',
+                              'px-3 py-2 rounded-md text-sm font-medium',
+                            )}
+                          >
+                            {navigation[0].name}
+                          </a>
+                          <a
+                            key={navigation[1].name}
+                            href={navigation[1].href}
+                            className={classNames(
+                              navigation[1].href.toLowerCase() == router.pathname
+                                ? 'bg-green-600 text-white'
+                                : ' hover:bg-green-400 text-white',
+                              'px-3 py-2 rounded-md text-sm font-medium',
+                            )}
+                          >
+                            {navigation[1].name}
+                          </a>
+                          <a
+                            key={'seguridad'}
+                            className={classNames(
+                              ' hover:bg-green-400 text-white',
+                              'px-3 py-2 rounded-md text-sm font-medium',
+                            )}
+                            onClick={handleClick}
+                          >
+                            Seguridad
+                          </a>
                         <Menu2
                           id="basic-menu"
                           anchorEl={anchorEl}
@@ -195,7 +195,7 @@ export default function Layout({ children }: any) {
               </div>
               <Disclosure.Panel className="md:hidden">
                 <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                  {user?.proyectos ? (
+                  {/* {user?.proyectos ? ( */}
                     <Disclosure.Button
                       key={navigation[0].name}
                       as="a"
@@ -209,8 +209,8 @@ export default function Layout({ children }: any) {
                     >
                       {navigation[0].name}
                     </Disclosure.Button>
-                  ) : null}
-                  {user?.usuarios ? (
+                  {/* ) : null} */}
+                  {/* {user?.usuarios ? ( */}
                     <Disclosure.Button
                       key={navigation[1].name}
                       as="a"
@@ -224,8 +224,8 @@ export default function Layout({ children }: any) {
                     >
                       {navigation[1].name}
                     </Disclosure.Button>
-                  ) : null}
-                  {user?.seguridad ? (
+                  {/* ) : null} */}
+                  {/* {user?.seguridad ? ( */}
                     <List>
                       <ListItemButton onClick={() => handleClickMob()}>
                         <ListItemText className={classNames('bg-green-800 text-white')} primary="Seguridad" />
@@ -249,7 +249,7 @@ export default function Layout({ children }: any) {
                         </List>
                       </Collapse>
                     </List>
-                  ) : null}
+                  {/* ) : null} */}
                 </div>
                 <div className="pt-4 pb-3 border-t border-green-600">
                   <div className="flex items-center px-5">
