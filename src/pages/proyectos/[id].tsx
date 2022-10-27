@@ -111,7 +111,6 @@ export default function test({ historias, sprints }: Props) {
     redirectIfFound: false,
   });
 
-  if (isNilorEmpty(proyecto)) return <text>No hay nada</text>;
   return (
     <Layout>
       <section className="flex flex-col min-h-full">
