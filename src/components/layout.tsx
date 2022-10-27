@@ -14,6 +14,8 @@ import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import List from '@mui/material/List';
+import InitialIcon from 'src/components/iniciales';
+import { acronimo } from 'src/helpers';
 
 export default function Layout({ children }: any) {
   const router = useRouter();
@@ -57,11 +59,7 @@ export default function Layout({ children }: any) {
     { name: 'Usuarios', href: '/usuarios', current: false },
     { name: 'Seguridad', href: '#', current: false },
   ];
-  const userNavigation = [
-    { name: 'Perfil', href: '#' },
-    { name: 'Configuración', href: '#' },
-    { name: 'Salir', href: '/api/login', onClick: onLogout },
-  ];
+  const userNavigation = [{ name: 'Salir', href: '/api/login', onClick: onLogout }];
 
   function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ');
@@ -78,40 +76,40 @@ export default function Layout({ children }: any) {
                   <div className="flex items-center">
                     <div className="hidden md:block">
                       <div className=" flex items-baseline space-x-4">
-                          <a
-                            key={navigation[0].name}
-                            href={navigation[0].href}
-                            className={classNames(
-                              navigation[0].href.toLowerCase() == router.pathname
-                                ? 'bg-green-600 text-white'
-                                : ' hover:bg-green-400 text-white',
-                              'px-3 py-2 rounded-md text-sm font-medium',
-                            )}
-                          >
-                            {navigation[0].name}
-                          </a>
-                          <a
-                            key={navigation[1].name}
-                            href={navigation[1].href}
-                            className={classNames(
-                              navigation[1].href.toLowerCase() == router.pathname
-                                ? 'bg-green-600 text-white'
-                                : ' hover:bg-green-400 text-white',
-                              'px-3 py-2 rounded-md text-sm font-medium',
-                            )}
-                          >
-                            {navigation[1].name}
-                          </a>
-                          <a
-                            key={'seguridad'}
-                            className={classNames(
-                              ' hover:bg-green-400 text-white',
-                              'px-3 py-2 rounded-md text-sm font-medium',
-                            )}
-                            onClick={() => handleClick}
-                          >
-                            Seguridad
-                          </a>
+                        <a
+                          key={navigation[0].name}
+                          href={navigation[0].href}
+                          className={classNames(
+                            navigation[0].href.toLowerCase() == router.pathname
+                              ? 'bg-green-600 text-white'
+                              : ' hover:bg-green-400 text-white',
+                            'px-3 py-2 rounded-md text-sm font-medium',
+                          )}
+                        >
+                          {navigation[0].name}
+                        </a>
+                        <a
+                          key={navigation[1].name}
+                          href={navigation[1].href}
+                          className={classNames(
+                            navigation[1].href.toLowerCase() == router.pathname
+                              ? 'bg-green-600 text-white'
+                              : ' hover:bg-green-400 text-white',
+                            'px-3 py-2 rounded-md text-sm font-medium',
+                          )}
+                        >
+                          {navigation[1].name}
+                        </a>
+                        <a
+                          key={'seguridad'}
+                          className={classNames(
+                            ' hover:bg-green-400 text-white',
+                            'px-3 py-2 rounded-md text-sm font-medium',
+                          )}
+                          onClick={() => handleClick}
+                        >
+                          Seguridad
+                        </a>
                         <Menu2
                           id="basic-menu"
                           anchorEl={anchorEl}
@@ -148,11 +146,7 @@ export default function Layout({ children }: any) {
                         <div>
                           <Menu.Button className="max-w-xs bg-green-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-800 focus:ring-white">
                             <span className="sr-only">Open user menu</span>
-                            <img
-                              className="h-8 w-8 rounded-full"
-                              src={'https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg'}
-                              alt=""
-                            />
+                            <InitialIcon initials={acronimo(user?.name)} />
                           </Menu.Button>
                         </div>
                         <Transition
@@ -260,11 +254,7 @@ export default function Layout({ children }: any) {
                 <div className="pt-4 pb-3 border-t border-green-600">
                   <div className="flex items-center px-5">
                     <div className="flex-shrink-0">
-                      <img
-                        className="h-10 w-10 rounded-full"
-                        src={'https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg'}
-                        alt=""
-                      />
+                      <InitialIcon initials={acronimo(user?.name)} />
                     </div>
                     <div className="ml-3">
                       <div className="text-base font-medium leading-none text-white">{user?.name}</div>
