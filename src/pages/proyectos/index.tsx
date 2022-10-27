@@ -53,7 +53,7 @@ export default function test() {
                   </a>
                 ) : null}
               </div>
-              <form className="group relative">
+              {/* <form className="group relative">
                 <svg
                   width="20"
                   height="20"
@@ -73,7 +73,7 @@ export default function test() {
                   aria-label="Filtrar Proyectos"
                   placeholder="Filtrar Proyectos..."
                 />
-              </form>
+              </form> */}
             </header>
             <ul className="bg-white p-4 sm:px-8 sm:pt-6 sm:pb-8 lg:p-4 xl:px-8 xl:pt-6 xl:pb-8 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm leading-6 ">
               <>

@@ -173,7 +173,7 @@ export default function IndexPermisos({ roles }: Props) {
                 </a>
                 ) : null} 
               </div>
-              <form className="group relative">
+              {/* <form className="group relative">
                 <svg
                   width="20"
                   height="20"
@@ -193,7 +193,7 @@ export default function IndexPermisos({ roles }: Props) {
                   aria-label="Buscar Rol"
                   placeholder="Buscar Rol..."
                 />
-              </form>
+              </form> */}
             </header>
 
             <TableContainer component={Paper}>
