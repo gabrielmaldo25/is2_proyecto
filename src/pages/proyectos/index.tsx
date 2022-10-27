@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import EditIcon from '@mui/icons-material/Edit';
 import InitialIcon from 'src/components/iniciales';
 import useUser from '../../../lib/useUser';
+import { acronimo } from 'src/helpers';
 
 export default function test() {
   const [proyectos, setProyectos] = useState<any>([]);
@@ -22,7 +23,7 @@ export default function test() {
   useEffect(() => {
     console.log('PROYECTOS: ', proyectos);
   }, [proyectos]);
-  
+
   const { user, mutateUser } = useUser({
     redirectTo: '/',
     redirectIfFound: false,
@@ -91,19 +92,9 @@ export default function test() {
                           <div className="flex row-start-1 row-end-3 sm:mt-4 lg:mt-0 xl:mt-4">
                             <>
                               <dt className="sr-only">Users</dt>
-                              {[
-                                {
-                                  avatar:
-                                    'https://lh3.googleusercontent.com/2hDpuTi-0AMKvoZJGd-yKWvK4tKdQr_kLIpB_qSeMau2TNGCNidAosMEvrEXFO9G6tmlFlPQplpwiqirgrIPWnCKMvElaYgI-HiVvXc=w600',
-                                  name: 'GG',
-                                },
-                                {
-                                  avatar: 'https://pbs.twimg.com/media/D6uc2kBX4AAv3xV.jpg',
-                                  name: 'HH',
-                                },
-                              ].map((user) => (
+                              {project.participantes?.map((participante: any) => (
                                 <dd className="flex justify-end sm:justify-start lg:justify-end xl:justify-start -space-x-1.5">
-                                  <InitialIcon initials={user.name} />
+                                  <InitialIcon initials={acronimo(participante.name)} />
                                 </dd>
                               ))}
                             </>
